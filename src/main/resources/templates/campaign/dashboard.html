@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Campaign Management | CreativePulse</title><link rel="stylesheet" href="/css/campaign.css"></head>
+<body>
+<header class="topbar"><div class="brand">CreativePulse <span>Campaign Management</span></div><nav><a class="active" href="/campaigns">Campaigns</a><a href="/clients">Clients</a><a href="/campaigns/new" class="btn small">+ New Campaign</a></nav></header>
+<main class="container">
+<div class="hero"><div><p class="eyebrow">CAMPAIGN MANAGER</p><h1>Campaign Dashboard</h1><p>One reliable record from campaign creation to completion.</p></div><a class="btn" href="/campaigns/new">Create Campaign</a></div>
+<div th:if="${success}" class="alert" th:text="${success}"></div>
+<section class="stats"><div class="stat"><span>Total campaigns</span><strong th:text="${total}">0</strong></div><div class="stat"><span>In progress</span><strong th:text="${active}">0</strong></div><div class="stat"><span>Completed</span><strong th:text="${completed}">0</strong></div></section>
+<section class="panel"><div class="panel-head"><div><h2>Current campaigns</h2><p>Active and non-archived campaign records.</p></div><a href="/clients" class="text-link">Manage clients →</a></div>
+<div class="table-wrap"><table><thead><tr><th>Campaign</th><th>Client</th><th>Team member</th><th>Deadline</th><th>Progress</th><th>Status</th><th></th></tr></thead><tbody>
+<tr th:if="${#lists.isEmpty(campaigns)}"><td colspan="7" class="empty">No campaigns yet. Create your first campaign.</td></tr>
+<tr th:each="c : ${campaigns}"><td><strong th:text="${c.campaignName}">Campaign</strong><small th:text="${c.description}">Description</small></td><td th:text="${c.client.companyName}">Client</td><td th:text="${c.assignedEmployee != null ? c.assignedEmployee.name : 'Unassigned'}">Unassigned</td><td th:text="${c.deadline}">2026-09-01</td><td><div class="progress"><i th:style="'width:' + ${c.progress} + '%'" ></i></div><span class="percent" th:text="${c.progress + '%'}">0%</span></td><td><span class="badge" th:classappend="' ' + ${#strings.toLowerCase(c.status.name())}" th:text="${c.status}">PLANNED</span></td><td class="actions"><a th:href="@{/campaigns/view/{id}(id=${c.id})}">View</a><a th:href="@{/campaigns/edit/{id}(id=${c.id})}">Edit</a></td></tr>
+</tbody></table></div></section></main>
+<script src="/js/campaign.js" defer></script>
+</body></html>

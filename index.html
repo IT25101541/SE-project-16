@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDD Lecture 01 - Mid Exam Quiz</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(135deg,#070707,#171717,#050505);
+  color:#fff;
+  min-height:100vh;
+}
+.container{max-width:900px;margin:auto;padding:35px 20px}
+header{
+  text-align:center;padding:30px 20px;margin-bottom:25px;
+  border:1px solid #333;border-radius:24px;
+  background:rgba(255,255,255,.05);backdrop-filter:blur(15px);
+}
+h1{margin:0 0 10px;font-size:clamp(28px,5vw,46px)}
+.subtitle{color:#aaa}
+.progress{height:8px;background:#333;border-radius:20px;overflow:hidden;margin:20px 0}
+.progress-bar{height:100%;width:0;background:#fff;transition:.3s}
+.card{
+  background:rgba(255,255,255,.06);border:1px solid #333;
+  border-radius:24px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.4)
+}
+.question-number{color:#aaa;margin-bottom:10px}
+.question{font-size:24px;line-height:1.4;margin-bottom:25px}
+.option{
+  display:block;width:100%;text-align:left;margin:12px 0;padding:17px 20px;
+  border:1px solid #444;border-radius:14px;background:#111;color:#fff;
+  cursor:pointer;font-size:16px;transition:.2s
+}
+.option:hover{border-color:#fff;transform:translateY(-1px)}
+.option.selected{border-color:#fff;background:#292929}
+.option.correct{border-color:#72ff9b;background:#12351f}
+.option.wrong{border-color:#ff6b6b;background:#3a1515}
+.feedback{display:none;margin-top:18px;padding:15px;border-radius:12px;background:#181818;color:#ccc}
+.actions{display:flex;gap:12px;margin-top:25px}
+button{
+  border:0;border-radius:12px;padding:14px 22px;font-weight:700;
+  cursor:pointer;font-size:15px
+}
+#next{background:#fff;color:#000;margin-left:auto}
+#next:disabled{opacity:.35;cursor:not-allowed}
+#restart{background:#333;color:#fff}
+.result{text-align:center;padding:35px}
+.score{font-size:64px;font-weight:800;margin:20px}
+.hidden{display:none}
+.review{text-align:left;margin-top:25px}
+.review div{padding:10px;border-bottom:1px solid #333}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>DDD Mid Exam Quiz</h1>
+<div class="subtitle">Database Design & Development — Lecture 01</div>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div id="counter">Question 1 of 20</div>
+</header>
+
+<div id="quiz" class="card">
+<div class="question-number" id="qnum"></div>
+<div class="question" id="question"></div>
+<div id="options"></div>
+<div class="feedback" id="feedback"></div>
+<div class="actions">
+<button id="next" disabled>Next Question →</button>
+</div>
+</div>
+
+<div id="result" class="card result hidden">
+<h2>Quiz Completed!</h2>
+<div class="score" id="score"></div>
+<div id="message"></div>
+<div class="review" id="review"></div>
+<br>
+<button id="restart">↻ Restart Quiz</button>
+</div>
+</div>
+
+<script>
+const questions = [
+["What is data?",["Raw facts","Processed information","Database software","Database structure"],0,
+"Data is a collection of raw facts that have not yet been processed into meaningful information."],
+["What is information?",["Raw facts without meaning","Processed and organized data with meaning","A database table","Metadata only"],1,
+"Information is processed and organized data that has meaning and can help people make decisions."],
+["Which is NOT a characteristic of a database?",["Organized","Shared","Secure","Always duplicated"],3,
+"The lesson lists organized, shared, secure, easy to update, reduced duplication and multiple-user support."],
+["What does DBMS stand for?",["Database Management System","Data Backup Management System","Database Machine System","Data Management Storage"],0,
+"DBMS stands for Database Management System."],
+["Which is a function of a DBMS?",["Retrieve data","Update records","Provide security","All of the above"],3,
+"A DBMS can retrieve and update data and provide security, among many other functions."],
+["Which set contains the five major parts of a database system environment?",["Hardware, Software, People, Procedures, Data","Hardware, Internet, Users, Tables, Applications","Software, Networks, Queries, Reports, Data","People, Programs, Files, Servers, Reports"],0,
+"The five major parts are Hardware, Software, People, Procedures and Data."],
+["What does metadata mean?",["Data deletion","Data about data","Duplicate data","Raw data"],1,
+"Metadata is information about the data, such as column names, data types, sizes, relationships and constraints."],
+["Which concept hides internal storage details from users and applications?",["Data integrity","Data abstraction","Data duplication","Data backup"],1,
+"Data abstraction hides internal storage details from users and applications."],
+["Different users seeing different portions of the same database is called:",["Data redundancy","Multiple views","Data backup","Schema refinement"],1,
+"Multiple views allow different users to see different parts of the same database depending on their role."],
+["What controls who can view, insert, update or delete data?",["Indexing","Access Control","Normalization","Metadata"],1,
+"Access Control manages user permissions such as viewing, inserting, updating and deleting."],
+["What is the first phase of database design?",["Physical database design","Security design","Requirement collection and analysis","Schema refinement"],2,
+"Requirement Collection and Analysis is the first phase."],
+["Which phase creates a high-level conceptual model such as an ER Model?",["Conceptual database design","Physical database design","Security design","Schema refinement"],0,
+"Conceptual database design creates a high-level conceptual data model such as the ER Model."],
+["Which phase converts the conceptual design into a logical database structure?",["Requirement analysis","Logical database design","Physical database design","Security design"],1,
+"Logical database design converts the conceptual schema into a logical schema and defines tables, keys and relationships."],
+["Which phase focuses on removing redundancy and improving consistency?",["Conceptual design","Schema refinement","Physical design","Security design"],1,
+"Schema refinement removes data redundancy, improves consistency and may apply normalization."],
+["Which phase focuses on indexes and storage performance?",["Requirement analysis","Conceptual design","Physical database design","Security design"],2,
+"Physical database design focuses on performance optimization, indexes and physical storage."],
+["Which phase assigns appropriate access permissions to users?",["Logical design","Schema refinement","Physical design","Security design"],3,
+"Security design identifies user roles and assigns appropriate access levels."],
+["Which is an advantage of on-premise hosting?",["Full control","Automatic provider-managed maintenance","Easy unlimited scalability","No dedicated IT staff required"],0,
+"On-premise hosting provides high security and control and full customization."],
+["Which is an advantage of cloud hosting?",["Limited scalability","Easy scalability","Requires dedicated local hardware","No Internet access"],1,
+"Cloud hosting is easily scalable and has a lower initial cost, with provider-managed infrastructure."],
+["What does DBaaS stand for?",["Database as a Service","Data Backup as a System","Database Application Security","Data Access and Storage"],0,
+"DBaaS means Database as a Service and is described as a fully managed cloud database model."],
+["What is a data-intensive application?",["A system handling only small amounts of data","A system avoiding concurrent users","A system that efficiently handles, stores, processes and retrieves large amounts of data","A system focused only on complex calculations"],2,
+"Data-intensive applications handle, store, process and retrieve large amounts of data efficiently."]
+];
+
+let current=0, score=0, answers=[];
+const $=id=>document.getElementById(id);
+
+function load(){
+  const q=questions[current];
+  $("qnum").textContent=`Question ${current+1}`;
+  $("counter").textContent=`Question ${current+1} of ${questions.length}`;
+  $("bar").style.width=`${(current/questions.length)*100}%`;
+  $("question").textContent=q[0];
+  $("options").innerHTML="";
+  $("feedback").style.display="none";
+  $("next").disabled=true;
+  q[1].forEach((text,i)=>{
+    const b=document.createElement("button");
+    b.className="option";
+    b.textContent=String.fromCharCode(65+i)+". "+text;
+    b.onclick=()=>select(i,b);
+    $("options").appendChild(b);
+  });
+}
+
+function select(i,btn){
+  const q=questions[current];
+  document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+  btn.classList.add(i===q[2]?"correct":"wrong");
+  if(i!==q[2]) document.querySelectorAll(".option")[q[2]].classList.add("correct");
+  if(i===q[2]) score++;
+  answers.push(i);
+  $("feedback").textContent=q[3];
+  $("feedback").style.display="block";
+  $("next").disabled=false;
+}
+
+$("next").onclick=()=>{
+  if(current<questions.length-1){current++;load();}
+  else finish();
+};
+
+function finish(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  $("bar").style.width="100%";
+  $("score").textContent=`${score} / ${questions.length}`;
+  const pct=score/questions.length*100;
+  $("message").textContent=pct>=90?"Excellent — exam ready! 🔥":pct>=75?"Very good — revise the weak areas.":"Keep practicing — review the key points and try again.";
+  $("review").innerHTML=questions.map((q,i)=>
+    `<div><b>Q${i+1}:</b> ${q[0]}<br><small>Your answer: ${q[1][answers[i]]} | Correct: ${q[1][q[2]]}</small></div>`
+  ).join("");
+}
+$("restart").onclick=()=>{current=0;score=0;answers=[];$("result").classList.add("hidden");$("quiz").classList.remove("hidden");load();};
+load();
+</script>
+</body>
+</html>
