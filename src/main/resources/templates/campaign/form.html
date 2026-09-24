@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${campaign.id == null ? 'Create Campaign' : 'Edit Campaign'}">
+        Campaign
+    </title>
+
+    <link rel="stylesheet" th:href="@{/css/campaign.css}">
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="brand">
+        CreativePulse
+        <span>Campaign Management</span>
+    </div>
+
+    <nav>
+        <a class="active" href="/campaigns">Campaigns</a>
+        <a href="/clients">Clients</a>
+    </nav>
+
+</header>
+
+
+<main class="container narrow">
+
+    <a class="back" href="/campaigns">
+        ← Back to campaigns
+    </a>
+
+
+    <section class="form-card">
+
+        <p class="eyebrow"
+           th:text="${campaign.id == null ? 'NEW CAMPAIGN' : 'UPDATE CAMPAIGN'}">
+            NEW CAMPAIGN
+        </p>
+
+
+        <h1 th:text="${campaign.id == null ? 'Create Campaign' : 'Edit Campaign'}">
+            Create Campaign
+        </h1>
+
+
+        <p class="muted">
+            Link the campaign to a client, assign a team member,
+            set dates and track progress.
+        </p>
+
+
+        <!-- IMPORTANT:
+             th:object must be on the form BEFORE using #fields
+        -->
+
+        <form th:action="@{/campaigns/save}"
+              th:object="${campaign}"
+              method="post">
+
+
+            <!-- Global validation errors -->
+            <div th:if="${#fields.hasGlobalErrors()}"
+                 class="error">
+
+                <div th:each="error : ${#fields.globalErrors()}"
+                     th:text="${error}">
+                </div>
+
+            </div>
+
+
+            <!-- Campaign ID -->
+            <input type="hidden" th:field="*{id}">
+
+
+            <div class="grid">
+
+
+                <!-- ========================= -->
+                <!-- CAMPAIGN NAME -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Campaign name
+
+                    <input type="text"
+                           th:field="*{campaignName}"
+                           placeholder="ABC Social Media Campaign"
+                           required>
+
+                    <span class="field-error"
+                          th:errors="*{campaignName}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- CLIENT -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Client
+
+                    <select th:field="*{client}" required>
+
+                        <option value="">
+                            Select client
+                        </option>
+
+                        <option th:each="client : ${clients}"
+                                th:value="${client.id}"
+                                th:text="${client.companyName}">
+                        </option>
+
+                    </select>
+
+                    <span class="field-error"
+                          th:errors="*{client}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- DESCRIPTION -->
+                <!-- ========================= -->
+
+                <label class="full">
+
+                    Description
+
+                    <textarea th:field="*{description}"
+                              rows="4"
+                              placeholder="Describe the campaign scope..."
+                              required></textarea>
+
+                    <span class="field-error"
+                          th:errors="*{description}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- START DATE -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Start date
+
+                    <input type="date"
+                           th:field="*{startDate}"
+                           required>
+
+                    <span class="field-error"
+                          th:errors="*{startDate}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- DEADLINE -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Deadline
+
+                    <input type="date"
+                           th:field="*{deadline}"
+                           required>
+
+                    <span class="field-error"
+                          th:errors="*{deadline}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- ASSIGNED EMPLOYEE -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Assigned team member
+
+                    <select th:field="*{assignedEmployee}">
+
+                        <option value="">
+                            Unassigned
+                        </option>
+
+                        <option th:each="employee : ${employees}"
+                                th:value="${employee.id}"
+                                th:text="${employee.name + ' — ' + employee.role}">
+                        </option>
+
+                    </select>
+
+                    <span class="field-error"
+                          th:errors="*{assignedEmployee}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- PROGRESS -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Progress (%)
+
+                    <input type="number"
+                           min="0"
+                           max="100"
+                           th:field="*{progress}">
+
+                    <span class="field-error"
+                          th:errors="*{progress}">
+                    </span>
+
+                </label>
+
+
+                <!-- ========================= -->
+                <!-- STATUS -->
+                <!-- ========================= -->
+
+                <label>
+
+                    Status
+
+                    <select th:field="*{status}">
+
+                        <option th:each="status : ${statuses}"
+                                th:value="${status}"
+                                th:text="${status}">
+                        </option>
+
+                    </select>
+
+                    <span class="field-error"
+                          th:errors="*{status}">
+                    </span>
+
+                </label>
+
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- FORM ACTIONS -->
+            <!-- ========================= -->
+
+            <div class="form-actions">
+
+                <a class="btn secondary"
+                   href="/campaigns">
+                    Cancel
+                </a>
+
+                <button class="btn"
+                        type="submit">
+                    Save Campaign
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </section>
+
+</main>
+
+<script src="/js/campaign.js" defer></script>
+</body>
+</html>
