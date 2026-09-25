@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${report.id} != null ? 'Edit Report' : 'New Report'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2 th:text="${report.id} != null ? 'Edit Report' : 'New Report'"></h2>
+
+    <form th:action="${report.id} != null ? @{/reports/update/{id}(id=${report.id})} : @{/reports/save}"
+          th:object="${report}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <label>Title</label>
+        <input type="text" th:field="*{title}" required />
+
+        <label>Description</label>
+        <textarea th:field="*{description}" rows="5"></textarea>
+
+        <label>Category</label>
+        <select th:field="*{category}" required>
+            <option value="Campaign">Campaign</option>
+            <option value="Budget">Budget</option>
+            <option value="Performance">Performance</option>
+            <option value="Client">Client</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label>Attachment</label>
+        <input type="file" name="file" />
+        <p th:if="${report.fileName != null}">
+            Current file: <span th:text="${report.fileName}"></span>
+        </p>
+
+        <button type="submit" class="btn">Save</button>
+        <a href="/reports">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${report.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2 th:text="${report.title}"></h2>
+
+    <p><strong>Category:</strong> <span th:text="${report.category}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${report.status}"></span></p>
+    <p><strong>Created by:</strong> <span th:text="${report.createdBy}"></span></p>
+    <p><strong>Created at:</strong> <span th:text="${#temporals.format(report.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+
+    <h3>Description</h3>
+    <p th:text="${report.description}"></p>
+
+    <p th:if="${report.fileName != null}">
+        <strong>Attachment:</strong>
+        <a th:href="@{/reports/download/{id}(id=${report.id})}" th:text="${report.fileName}"></a>
+    </p>
+
+    <a href="/reports">&larr; Back to My Reports</a>
+</div>
+</body>
+</html>

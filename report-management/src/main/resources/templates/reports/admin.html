@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - All Reports</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Admin Dashboard - All Reports</h2>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Submitted By</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="report : ${reports}">
+            <td><a th:href="@{/reports/view/{id}(id=${report.id})}" th:text="${report.title}"></a></td>
+            <td th:text="${report.category}"></td>
+            <td th:text="${report.createdBy}"></td>
+            <td th:text="${report.status}"></td>
+            <td th:text="${#temporals.format(report.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <form th:action="@{/reports/admin/status/{id}(id=${report.id})}" method="post">
+                    <select name="status">
+                        <option value="PENDING" th:selected="${report.status == 'PENDING'}">PENDING</option>
+                        <option value="APPROVED" th:selected="${report.status == 'APPROVED'}">APPROVED</option>
+                        <option value="REJECTED" th:selected="${report.status == 'REJECTED'}">REJECTED</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(reports)}">
+            <td colspan="6">No reports submitted yet.</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
