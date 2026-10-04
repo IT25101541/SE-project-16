@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CreativePulse Advertising</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap">
+<style>
+:root{--ink:#14213d;--mut:#5b6478;--bg:#eef1f5;--card:#fff;--line:#d9dee7;--pulse:#e5195f;--teal:#0f9d8a;--amber:#d98a00}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Sora,system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
+nav{width:210px;background:var(--ink);color:#fff;padding:24px 16px;flex-shrink:0}
+nav h1{font-size:18px;margin:0 0 28px;line-height:1.2}
+nav h1 span{color:var(--pulse)}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:#b8c0d4;padding:10px 12px;border-radius:6px;font:inherit;cursor:pointer;margin-bottom:4px}
+nav button.on,nav button:hover{background:#25355c;color:#fff}
+main{flex:1;padding:28px 32px;min-width:0}
+h2{margin:0 0 18px;font-size:24px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);width:100%}
+.bar input,.bar select{width:auto;min-width:200px}
+button.btn{font:inherit;padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+button.btn.p{background:var(--pulse);border-color:var(--pulse);color:#fff;font-weight:600}
+button.btn.d{color:var(--pulse)}
+button.btn.s{padding:4px 9px;font-size:13px}
+:focus-visible{outline:3px solid #7aa2ff;outline-offset:1px}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--mut);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.act{white-space:nowrap;display:flex;gap:6px;flex-wrap:wrap}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:#e3e7ef}
+.tag.ACTIVE,.tag.COMPLETED{background:#d5f2ec;color:#0a6b5d}
+.tag.IN_PROGRESS{background:#ffe0ec;color:#b0123f}
+.tag.ON_HOLD{background:#fff0cc;color:#8a5a00}
+.tag.CANCELLED,.tag.INACTIVE{background:#e3e7ef;color:#5b6478}
+.meter{width:110px;height:8px;background:#e3e7ef;border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle}
+.meter i{display:block;height:100%;background:var(--pulse)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;border-left:5px solid var(--pulse)}
+.stat b{font-size:34px;display:block;line-height:1.1}
+.stat.t{border-left-color:var(--teal)}.stat.a{border-left-color:var(--amber)}.stat.g{border-left-color:#8a93a6}
+.empty{padding:28px;color:var(--mut);text-align:center}
+dialog{border:0;border-radius:10px;padding:24px;width:min(480px,94vw);box-shadow:0 20px 60px #0004}
+dialog::backdrop{background:#14213d88}
+dialog h3{margin:0 0 14px}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:10px}
+label input,label select,label textarea{margin-top:3px}
+.row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.err{color:#b0123f;font-size:14px;margin-top:8px;white-space:pre-line}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;display:none}
+@media(max-width:700px){body{flex-direction:column}nav{width:100%;display:flex;gap:6px;padding:12px}nav h1{display:none}main{padding:18px}}
+</style>
+</head>
+<body>
+<nav>
+  <h1>Creative<span>Pulse</span><br>Advertising</h1>
+  <button data-v="dashboard" class="on">Dashboard</button>
+  <button data-v="clients">Clients</button>
+  <button data-v="campaigns">Campaigns</button>
+</nav>
+<main id="main"></main>
+
+<dialog id="dlg"><form id="frm" method="dialog"><h3 id="dt"></h3><div id="fields"></div><div class="err" id="derr"></div>
+<div class="row"><button type="button" class="btn" id="cancel">Cancel</button><button class="btn p" id="save">Save</button></div></form></dialog>
+
+<dialog id="team"><h3 id="tt">Team</h3><div id="tbody"></div><div class="err" id="terr"></div>
+<form id="tform" style="margin-top:14px"><label>User ID<input name="userId" type="number" min="1" required></label>
+<label>Role in team<input name="roleInTeam" placeholder="e.g. Designer"></label>
+<div class="row"><button type="button" class="btn" id="tclose">Close</button><button class="btn p">Assign member</button></div></form></dialog>
+<div id="toast" role="status"></div>
+
+<script>
+const STATUS = ['PLANNED','IN_PROGRESS','ON_HOLD','COMPLETED','CANCELLED'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => Number(n).toLocaleString(undefined, {style:'currency', currency:'LKR', maximumFractionDigits:0});
+const label = s => s.replace('_',' ').toLowerCase().replace(/^./, c => c.toUpperCase());
+let clients = [], view = 'dashboard';
+
+async function api(path, method='GET', body) {
+  const r = await fetch('/api' + path, {method, headers:{'Content-Type':'application/json'}, body: body ? JSON.stringify(body) : undefined});
+  if (r.status === 204) return null;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const e = j.error;
+    throw new Error(typeof e === 'object' && e ? Object.entries(e).map(([k,v]) => k + ': ' + v).join('\n') : (e || 'Request failed (' + r.status + ')'));
+  }
+  return j;
+}
+function toast(m) { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2500); }
+const fail = e => alert(e.message);
+
+// ---- generic form dialog ----
+function form(title, fields, vals, onSave) {
+  $('#dt').textContent = title; $('#derr').textContent = '';
+  $('#fields').innerHTML = fields.map(f => {
+    const v = vals?.[f.k] ?? f.def ?? '';
+    let el;
+    if (f.opts) el = `<select name="${f.k}">${f.opts.map(o => `<option value="${esc(o[0])}" ${String(o[0])===String(v)?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+    else if (f.area) el = `<textarea name="${f.k}" rows="3">${esc(v)}</textarea>`;
+    else el = `<input name="${f.k}" type="${f.t||'text'}" value="${esc(v)}" ${f.req?'required':''} ${f.t==='number'?'min="0" step="any"':''}>`;
+    return `<label>${f.l}${f.req?' *':''}${el}</label>`;
+  }).join('');
+  $('#frm').onsubmit = async e => {
+    e.preventDefault();
+    const d = {};
+    fields.forEach(f => { let v = $('#frm').elements[f.k].value.trim(); d[f.k] = v === '' ? null : (f.t === 'number' || f.num ? Number(v) : v); });
+    try { await onSave(d); $('#dlg').close(); } catch (x) { $('#derr').textContent = x.message; }
+  };
+  $('#dlg').showModal();
+}
+$('#cancel').onclick = () => $('#dlg').close();
+$('#tclose').onclick = () => $('#team').close();
+
+// ---- navigation ----
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => go(b.dataset.v));
+function go(v) {
+  view = v;
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  ({dashboard, clients: clientsView, campaigns: campaignsView})[v]();
+}
+
+// ---- dashboard ----
+async function dashboard() {
+  $('#main').innerHTML = '<h2>Dashboard</h2><div class="cards" id="cards"></div>';
+  try {
+    const s = await api('/campaigns/summary');
+    const cls = {PLANNED:'g', IN_PROGRESS:'', ON_HOLD:'a', COMPLETED:'t', CANCELLED:'g'};
+    const total = Object.values(s).reduce((a, b) => a + b, 0);
+    $('#cards').innerHTML = `<div class="stat"><b>${total}</b>All campaigns</div>` +
+      STATUS.map(k => `<div class="stat ${cls[k]}"><b>${s[k] || 0}</b>${label(k)}</div>`).join('');
+  } catch (e) { $('#main').innerHTML += `<p class="err">${esc(e.message)}<br>Is the backend running and the database set up?</p>`; }
+}
+
+// ---- clients ----
+const clientFields = [
+  {k:'companyName', l:'Company name', req:1}, {k:'contactPerson', l:'Contact person', req:1},
+  {k:'email', l:'Email', t:'email', req:1}, {k:'phone', l:'Phone'}, {k:'address', l:'Address'}, {k:'industry', l:'Industry'},
+  {k:'status', l:'Status', opts:[['ACTIVE','Active'],['INACTIVE','Inactive']]}];
+
+function clientsView() {
+  $('#main').innerHTML = `<h2>Clients</h2><div class="bar"><input id="q" type="search" placeholder="Search clients"><button class="btn p" id="add">Register client</button></div><div class="wrap" id="list"></div>`;
+  $('#q').oninput = loadClients; $('#add').onclick = () => form('Register client', clientFields, null, async d => { await api('/clients', 'POST', d); toast('Client registered'); loadClients(); });
+  loadClients();
+}
+async function loadClients() {
+  try {
+    clients = await api('/clients?search=' + encodeURIComponent($('#q')?.value || ''));
+    $('#list').innerHTML = clients.length ? `<table><tr><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>Industry</th><th>Status</th><th></th></tr>` +
+      clients.map(c => `<tr><td><b>${esc(c.companyName)}</b></td><td>${esc(c.contactPerson)}</td><td>${esc(c.email)}</td><td>${esc(c.phone)}</td><td>${esc(c.industry)}</td>
+      <td><span class="tag ${c.status}">${label(c.status)}</span></td>
+      <td class="act"><button class="btn s" onclick="editClient(${c.clientId})">Edit</button><button class="btn s d" onclick="delClient(${c.clientId})">Delete</button></td></tr>`).join('') + '</table>'
+      : '<div class="empty">No clients found. Use "Register client" to add one.</div>';
+  } catch (e) { fail(e); }
+}
+function editClient(id) { const c = clients.find(x => x.clientId === id); form('Edit client', clientFields, c, async d => { await api('/clients/' + id, 'PUT', d); toast('Client updated'); loadClients(); }); }
+async function delClient(id) { if (!confirm('Delete this client?')) return; try { await api('/clients/' + id, 'DELETE'); toast('Client deleted'); loadClients(); } catch (e) { fail(e); } }
+
+// ---- campaigns ----
+let campaigns = [];
+function campaignsView() {
+  $('#main').innerHTML = `<h2>Campaigns</h2><div class="bar"><input id="q" type="search" placeholder="Search campaign or client">
+  <select id="st"><option value="">All statuses</option>${STATUS.map(s => `<option value="${s}">${label(s)}</option>`).join('')}</select>
+  <button class="btn p" id="add">Create campaign</button></div><div class="wrap" id="list"></div>`;
+  $('#q').oninput = loadCampaigns; $('#st').onchange = loadCampaigns;
+  $('#add').onclick = async () => {
+    try { clients = await api('/clients'); } catch (e) { return fail(e); }
+    if (!clients.length) return alert('Register a client first.');
+    form('Create campaign', campFields(), {status:'PLANNED', progress:0}, async d => { await api('/campaigns', 'POST', d); toast('Campaign created'); loadCampaigns(); });
+  };
+  loadCampaigns();
+}
+const campFields = () => [
+  {k:'clientId', l:'Client', num:1, opts: clients.map(c => [c.clientId, c.companyName])},
+  {k:'name', l:'Campaign name', req:1}, {k:'description', l:'Description', area:1},
+  {k:'budget', l:'Budget (LKR)', t:'number', req:1}, {k:'startDate', l:'Start date', t:'date', req:1}, {k:'endDate', l:'End date', t:'date', req:1},
+  {k:'status', l:'Status', opts: STATUS.map(s => [s, label(s)])}, {k:'progress', l:'Progress (%)', t:'number'}];
+
+async function loadCampaigns() {
+  try {
+    const p = new URLSearchParams({status: $('#st').value, search: $('#q').value});
+    campaigns = await api('/campaigns?' + p);
+    $('#list').innerHTML = campaigns.length ? `<table><tr><th>Campaign</th><th>Client</th><th>Dates</th><th>Budget</th><th>Status</th><th>Progress</th><th></th></tr>` +
+      campaigns.map(c => `<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.clientName)}</td><td>${c.startDate} to ${c.endDate}</td><td>${money(c.budget)}</td>
+      <td><span class="tag ${c.status}">${label(c.status)}</span></td>
+      <td><span class="meter"><i style="width:${c.progress}%"></i></span> ${c.progress}%</td>
+      <td class="act"><button class="btn s" onclick="editCamp(${c.campaignId})">Edit</button><button class="btn s" onclick="statusCamp(${c.campaignId})">Status</button>
+      <button class="btn s" onclick="schedCamp(${c.campaignId})">Dates</button><button class="btn s" onclick="teamCamp(${c.campaignId})">Team</button>
+      <button class="btn s d" onclick="delCamp(${c.campaignId})">Delete</button></td></tr>`).join('') + '</table>'
+      : '<div class="empty">No campaigns match. Use "Create campaign" to add one.</div>';
+  } catch (e) { fail(e); }
+}
+const find = id => campaigns.find(x => x.campaignId === id);
+async function editCamp(id) { try { clients = await api('/clients'); } catch (e) { return fail(e); }
+  form('Edit campaign', campFields(), find(id), async d => { await api('/campaigns/' + id, 'PUT', d); toast('Campaign updated'); loadCampaigns(); }); }
+function statusCamp(id) { form('Update status', [{k:'status', l:'Status', opts: STATUS.map(s => [s, label(s)])}, {k:'progress', l:'Progress (%)', t:'number', req:1}], find(id),
+  async d => { await api('/campaigns/' + id + '/status', 'PATCH', d); toast('Status updated'); loadCampaigns(); }); }
+function schedCamp(id) { form('Change schedule', [{k:'startDate', l:'Start date', t:'date', req:1}, {k:'endDate', l:'End date', t:'date', req:1}], find(id),
+  async d => { await api('/campaigns/' + id + '/schedule', 'PATCH', d); toast('Schedule updated'); loadCampaigns(); }); }
+async function delCamp(id) { if (!confirm('Delete this campaign?')) return; try { await api('/campaigns/' + id, 'DELETE'); toast('Campaign deleted'); loadCampaigns(); } catch (e) { fail(e); } }
+
+// ---- team assignments ----
+async function teamCamp(id) {
+  const c = find(id); $('#tt').textContent = 'Team: ' + c.name; $('#terr').textContent = '';
+  const draw = async () => {
+    const a = await api('/campaigns/' + id + '/assignments');
+    $('#tbody').innerHTML = a.length ? a.map(m => `<div class="bar" style="justify-content:space-between;margin:0 0 6px"><span><b>${esc(m.userName)}</b> (user ${m.userId})${m.roleInTeam ? ', ' + esc(m.roleInTeam) : ''}</span>
+      <button class="btn s d" data-u="${m.userId}">Remove</button></div>`).join('') : '<div class="empty">No team members yet.</div>';
+    $('#tbody').querySelectorAll('button').forEach(b => b.onclick = async () => { try { await api(`/campaigns/${id}/assignments/${b.dataset.u}`, 'DELETE'); draw(); } catch (e) { $('#terr').textContent = e.message; } });
+  };
+  $('#tform').onsubmit = async e => {
+    e.preventDefault(); const f = e.target.elements;
+    try { await api(`/campaigns/${id}/assignments`, 'POST', {userId: Number(f.userId.value), roleInTeam: f.roleInTeam.value || null}); e.target.reset(); $('#terr').textContent = ''; draw(); }
+    catch (x) { $('#terr').textContent = x.message; }
+  };
+  try { await draw(); $('#team').showModal(); } catch (e) { fail(e); }
+}
+
+go('dashboard');
+</script>
+</body>
+</html>
