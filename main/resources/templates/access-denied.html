@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Access denied')}"></head>
+<body>
+<header th:replace="~{fragments :: navbar('')}"></header>
+
+<main class="container container--narrow">
+    <article class="card card--center">
+        <h1>Access denied</h1>
+        <p class="muted">Your role does not have permission to open that page.</p>
+        <a th:href="@{/dashboard}" class="btn btn--primary">Back to dashboard</a>
+    </article>
+</main>
+
+</body>
+</html>

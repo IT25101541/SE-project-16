@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My profile')}"></head>
+<body>
+<header th:replace="~{fragments :: navbar('profile')}"></header>
+
+<main class="container">
+
+    <div class="page-head">
+        <div>
+            <h1>My profile</h1>
+            <p class="muted">Update your details or change your password.</p>
+        </div>
+    </div>
+
+    <div class="alert alert--success" role="status" th:if="${success}" th:text="${success}"></div>
+
+    <div class="grid-2">
+        <article class="card">
+            <h3>Personal details</h3>
+            <form th:action="@{/profile}" th:object="${profileForm}" method="post" class="form" novalidate>
+                <div class="field">
+                    <label for="emailRo">Email address</label>
+                    <input type="email" id="emailRo" th:value="${currentUser.email}" disabled>
+                    <p class="field__hint">Your email is your sign-in name and cannot be changed here.</p>
+                </div>
+                <div class="field">
+                    <label for="roleRo">Role</label>
+                    <input type="text" id="roleRo" th:value="${currentUser.role.displayName}" disabled>
+                    <p class="field__hint">Only an administrator can change your role.</p>
+                </div>
+                <div class="field" th:classappend="${#fields.hasErrors('fullName')} ? 'field--error'">
+                    <label for="fullName">Full name</label>
+                    <input type="text" id="fullName" th:field="*{fullName}" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Error</p>
+                </div>
+                <div class="field" th:classappend="${#fields.hasErrors('phone')} ? 'field--error'">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" th:field="*{phone}">
+                    <p class="field__error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Error</p>
+                </div>
+                <button type="submit" class="btn btn--primary">Save changes</button>
+            </form>
+        </article>
+
+        <article class="card">
+            <h3>Change password</h3>
+            <form th:action="@{/profile/password}" th:object="${passwordForm}" method="post" class="form" novalidate>
+                <div class="field" th:classappend="${#fields.hasErrors('currentPassword')} ? 'field--error'">
+                    <label for="currentPassword">Current password</label>
+                    <input type="password" id="currentPassword" th:field="*{currentPassword}" autocomplete="current-password" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}">Error</p>
+                </div>
+                <div class="field" th:classappend="${#fields.hasErrors('newPassword')} ? 'field--error'">
+                    <label for="newPassword">New password</label>
+                    <input type="password" id="newPassword" th:field="*{newPassword}" autocomplete="new-password" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">Error</p>
+                    <p class="field__hint" th:unless="${#fields.hasErrors('newPassword')}">8+ characters, with a letter and a number.</p>
+                </div>
+                <div class="field" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'field--error'">
+                    <label for="confirmPassword">Confirm new password</label>
+                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}" autocomplete="new-password" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Error</p>
+                </div>
+                <button type="submit" class="btn btn--primary">Update password</button>
+            </form>
+        </article>
+    </div>
+</main>
+
+</body>
+</html>
