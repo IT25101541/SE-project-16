@@ -1,4 +1,3 @@
-
 # Mac
 .DS_Store
 
@@ -7,9 +6,6 @@
 *.iml
 
 # Maven build output
-target/
-.DS_Store
-.idea/
 target/
 
 # Logs / Windows
