@@ -1,0 +1,9 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<!DOCTYPE html><html><head><title>Employee Task Management</title><link rel="stylesheet" href="${pageContext.request.contextPath}/css/app.css"></head>
+<body><div class="layout"><aside class="sidebar"><div class="brand">Creative<span>Pulse</span></div><div class="role">CAMPAIGN MANAGER</div><a href="${pageContext.request.contextPath}/campaign-manager">Overview</a><a href="${pageContext.request.contextPath}/campaign-manager/campaigns">Campaign Management</a><a class="active" href="#">Employee Task Management</a><a href="${pageContext.request.contextPath}/clients">Client Management</a><div class="separator"></div><a href="#">Advertisement Management</a><a href="#">Billing & Payment</a><a href="#">Report Management</a></aside>
+<main class="content"><header><div><span class="eyebrow">EMPLOYEE TASK MANAGEMENT</span><h1>Employee Tasks</h1><p>This is intentionally separate from Campaign Management.</p></div><a class="btn" href="${pageContext.request.contextPath}/campaign-manager/tasks/new">+ Add Task</a></header>
+<div class="mini-cards"><div>Total Tasks <b>${total}</b></div><div>Pending <b>${pending}</b></div></div>
+<div class="table-card"><table><thead><tr><th>Task</th><th>Campaign ID</th><th>Employee</th><th>Priority</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead><tbody>
+<c:forEach var="t" items="${tasks}"><tr><td><b>${t.title}</b></td><td>${t.campaignId}</td><td>${t.employeeName}</td><td>${t.priority}</td><td><span class="badge">${t.status}</span></td><td>${t.deadline}</td><td class="actions"><a href="${pageContext.request.contextPath}/campaign-manager/tasks/edit/${t.id}">Edit</a><a href="${pageContext.request.contextPath}/campaign-manager/tasks/delete/${t.id}" onclick="return confirm('Delete this task?')">Delete</a></td></tr></c:forEach>
+</tbody></table></div></main></div></body></html>
