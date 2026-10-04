@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Campaigns')}"></head>
+<body>
+<link rel="stylesheet" th:href="@{/css/campaign.css}">
+<header th:replace="~{fragments :: navbar('campaigns')}"></header>
+
+<main class="container" id="main">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol>
+            <li><a th:href="@{/dashboard}">Dashboard</a></li>
+            <li aria-current="page">Campaigns</li>
+        </ol>
+    </nav>
+
+    <div class="page-head">
+        <div>
+            <h1>Campaigns</h1>
+            <p class="muted">Create, track and update advertising campaigns.</p>
+        </div>
+        <a th:href="@{/campaigns/new}" class="btn btn--primary"
+           sec:authorize="hasAnyRole('ADMIN','MANAGER')">+ New campaign</a>
+    </div>
+
+    <div class="alert alert--success" role="status" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert--danger" role="alert" th:if="${error}" th:text="${error}"></div>
+
+    <!-- Status filter chips with counts -->
+    <nav class="chips" aria-label="Filter by status">
+        <a th:href="@{/campaigns}" class="chip" th:classappend="${selectedStatus == null} ? 'is-active'">
+            All
+        </a>
+        <a th:each="s : ${statuses}" th:href="@{/campaigns(status=${s})}" class="chip"
+           th:classappend="${selectedStatus == s} ? 'is-active'">
+            <span th:text="${s.displayName}">Status</span>
+            <span class="chip__count" th:text="${counts.get(s)}">0</span>
+        </a>
+    </nav>
+
+    <form th:action="@{/campaigns}" method="get" class="search" role="search">
+        <label for="q" class="sr-only">Search campaigns</label>
+        <input type="search" id="q" name="q" th:value="${query}" placeholder="Search by campaign or client name">
+        <input type="hidden" name="status" th:if="${selectedStatus != null}" th:value="${selectedStatus}">
+        <button type="submit" class="btn btn--outline">Search</button>
+        <a th:href="@{/campaigns}" class="link-sm" th:if="${!#strings.isEmpty(query) or selectedStatus != null}">Clear</a>
+    </form>
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Campaign</th>
+                <th scope="col">Category</th>
+                <th scope="col">Status</th>
+                <th scope="col">Schedule</th>
+                <th scope="col">Budget (LKR)</th>
+                <th scope="col">Progress</th>
+                <th scope="col">Assigned to</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${campaigns}">
+                <td>
+                    <a class="cell-main" th:href="@{/campaigns/{id}(id=${c.id})}" th:text="${c.name}">Name</a>
+                    <div class="cell-sub" th:text="${c.clientName}">Client</div>
+                </td>
+                <td th:text="${c.category.displayName}">Category</td>
+                <td><span class="badge" th:classappend="${c.status.cssClass}" th:text="${c.status.displayName}">Status</span></td>
+                <td>
+                    <div th:text="${#temporals.format(c.startDate, 'dd MMM yyyy')} + ' - ' + ${#temporals.format(c.endDate, 'dd MMM yyyy')}">dates</div>
+                    <div class="overdue" th:if="${c.overdue}">Overdue</div>
+                </td>
+                <td class="num" th:text="${#numbers.formatDecimal(c.budget, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+                <td>
+                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                         th:attr="aria-valuenow=${c.progress}">
+                        <span class="progress__fill" th:style="'width:' + ${c.progress} + '%'"></span>
+                    </div>
+                    <span class="cell-sub" th:text="${c.progress} + '%'">0%</span>
+                </td>
+                <td>
+                    <span th:if="${c.assignedToName != null}" th:text="${c.assignedToName}">Name</span>
+                    <span class="muted" th:if="${c.assignedToName == null}">Unassigned</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <a th:href="@{/campaigns/{id}(id=${c.id})}" class="btn btn--outline btn--sm">View</a>
+                        <a th:href="@{/campaigns/{id}/edit(id=${c.id})}" class="btn btn--outline btn--sm"
+                           sec:authorize="hasAnyRole('ADMIN','MANAGER')">Edit</a>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(campaigns)}">
+                <td colspan="8" class="empty">No campaigns found.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

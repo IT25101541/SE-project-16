@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Campaign form')}"></head>
+<body>
+<link rel="stylesheet" th:href="@{/css/campaign.css}">
+<header th:replace="~{fragments :: navbar('campaigns')}"></header>
+
+<main class="container container--narrow" id="main">
+
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol>
+            <li><a th:href="@{/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/campaigns}">Campaigns</a></li>
+            <li th:if="${mode == 'edit'}"><a th:href="@{/campaigns/{id}(id=${campaign.id})}" th:text="${campaign.name}">Campaign</a></li>
+            <li aria-current="page" th:text="${mode == 'edit'} ? 'Edit' : 'New campaign'">New campaign</li>
+        </ol>
+    </nav>
+
+    <div class="page-head">
+        <div>
+            <h1 th:text="${mode == 'edit'} ? 'Edit campaign' : 'Create a campaign'">Create a campaign</h1>
+            <p class="muted" th:if="${mode == 'create'}">New campaigns start in Planning with 0% progress.</p>
+            <p class="muted" th:if="${mode == 'edit'}">Update the details, schedule, status and progress.</p>
+        </div>
+    </div>
+
+    <article class="card">
+        <form th:action="${mode == 'edit'} ? @{/campaigns/{id}/edit(id=${campaign.id})} : @{/campaigns/new}"
+              th:object="${form}" method="post" class="form" novalidate>
+
+            <div class="alert alert--danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</p>
+            </div>
+
+            <div class="field" th:classappend="${#fields.hasErrors('name')} ? 'field--error'">
+                <label for="name">Campaign name</label>
+                <input type="text" id="name" th:field="*{name}" maxlength="120" required>
+                <p class="field__error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Error</p>
+            </div>
+
+            <div class="field" th:classappend="${#fields.hasErrors('clientName')} ? 'field--error'">
+                <label for="clientName">Client name</label>
+                <input type="text" id="clientName" th:field="*{clientName}" maxlength="120" required>
+                <p class="field__error" th:if="${#fields.hasErrors('clientName')}" th:errors="*{clientName}">Error</p>
+            </div>
+
+            <div class="field" th:classappend="${#fields.hasErrors('description')} ? 'field--error'">
+                <label for="description">Description <span class="muted">(optional)</span></label>
+                <textarea id="description" th:field="*{description}" rows="4" maxlength="1000"></textarea>
+                <p class="field__error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Error</p>
+            </div>
+
+            <div class="field-row">
+                <div class="field" th:classappend="${#fields.hasErrors('category')} ? 'field--error'">
+                    <label for="category">Category</label>
+                    <select id="category" th:field="*{category}" required>
+                        <option value="">Select a category</option>
+                        <option th:each="c : ${categories}" th:value="${c}" th:text="${c.displayName}">Category</option>
+                    </select>
+                    <p class="field__error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">Error</p>
+                </div>
+
+                <div class="field" th:classappend="${#fields.hasErrors('budget')} ? 'field--error'">
+                    <label for="budget">Budget (LKR)</label>
+                    <input type="number" id="budget" th:field="*{budget}" min="0" step="0.01" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('budget')}" th:errors="*{budget}">Error</p>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field" th:classappend="${#fields.hasErrors('startDate')} ? 'field--error'">
+                    <label for="startDate">Start date</label>
+                    <input type="date" id="startDate" th:field="*{startDate}" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">Error</p>
+                </div>
+
+                <div class="field" th:classappend="${#fields.hasErrors('endDate')} ? 'field--error'">
+                    <label for="endDate">End date / deadline</label>
+                    <input type="date" id="endDate" th:field="*{endDate}" required>
+                    <p class="field__error" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">Error</p>
+                </div>
+            </div>
+
+            <div class="field" th:classappend="${#fields.hasErrors('assignedToId')} ? 'field--error'">
+                <label for="assignedToId">Assign to team member <span class="muted">(optional)</span></label>
+                <select id="assignedToId" th:field="*{assignedToId}">
+                    <option value="">Unassigned</option>
+                    <option th:each="m : ${members}" th:value="${m.id}"
+                            th:text="${m.fullName} + ' (' + ${m.role.displayName} + ')'">Member</option>
+                </select>
+                <p class="field__error" th:if="${#fields.hasErrors('assignedToId')}" th:errors="*{assignedToId}">Error</p>
+            </div>
+
+            <!-- Status and progress can only be changed when editing -->
+            <div class="field-row" th:if="${mode == 'edit'}">
+                <div class="field" th:classappend="${#fields.hasErrors('status')} ? 'field--error'">
+                    <label for="status">Status</label>
+                    <select id="status" th:field="*{status}" required>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.displayName}">Status</option>
+                    </select>
+                    <p class="field__error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">Error</p>
+                </div>
+
+                <div class="field" th:classappend="${#fields.hasErrors('progress')} ? 'field--error'">
+                    <label for="progress">Progress (%)</label>
+                    <input type="number" id="progress" th:field="*{progress}" min="0" max="100" step="1" required>
+                    <p class="field__hint" th:unless="${#fields.hasErrors('progress')}">Completed campaigns are set to 100% automatically.</p>
+                    <p class="field__error" th:if="${#fields.hasErrors('progress')}" th:errors="*{progress}">Error</p>
+                </div>
+            </div>
+
+            <div class="form__actions">
+                <a th:href="${mode == 'edit'} ? @{/campaigns/{id}(id=${campaign.id})} : @{/campaigns}"
+                   class="btn btn--outline">Cancel</a>
+                <button type="submit" class="btn btn--primary"
+                        th:text="${mode == 'edit'} ? 'Save changes' : 'Create campaign'">Save</button>
+            </div>
+        </form>
+    </article>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
