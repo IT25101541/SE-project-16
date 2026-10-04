@@ -20,11 +20,7 @@ public class HomeController {
         return "users";
     }
 
-
-    @GetMapping("/campaigns")
-    public String campaigns() {
-        return "campaigns";
-    }
+    // "/campaigns" is handled by CampaignController
 
     @GetMapping("/advertisements")
     public String advertisements() {
