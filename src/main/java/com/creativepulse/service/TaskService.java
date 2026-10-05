@@ -23,15 +23,15 @@ public class TaskService {
         return taskDAO.getTaskById(id);
     }
 
-    public void addTask(Task task) {
-        taskDAO.addTask(task);
+    public boolean addTask(Task task) {
+        return taskDAO.addTask(task);
     }
 
-    public void updateTask(Task task) {
-        taskDAO.updateTask(task);
+    public boolean updateTask(Task task) {
+        return taskDAO.updateTask(task);
     }
 
-    public void deleteTask(int id) {
-        taskDAO.deleteTask(id);
+    public boolean deleteTask(int id) {
+        return taskDAO.deleteTask(id);
     }
 }

@@ -9,7 +9,7 @@
   <title>Employee Task Management - CreativePulse</title>
 
   <link rel="stylesheet"
-        href="${pageContext.request.contextPath}/css/style.css">
+        href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
 
 </head>
 
@@ -119,73 +119,64 @@
           if (tasks != null && !tasks.isEmpty()) {
 
             for (com.creativepulse.model.Task task : tasks) {
+
+              String priority = String.valueOf(task.getPriority());
+              String status   = String.valueOf(task.getStatus());
         %>
 
         <tr>
 
+          <td><%= task.getTaskId() %></td>
+
+          <td><%= task.getTaskTitle() %></td>
+
+          <td><%= task.getCampaignId() %></td>
+
           <td>
-            <%= task.getTaskId() %>
+            <span class="priority priority-<%= priority.toLowerCase() %>">
+              <%= priority %>
+            </span>
+          </td>
+
+          <td><%= task.getDeadline() %></td>
+
+          <td>
+            <span class="badge status-<%= status.toLowerCase().replace(" ", "-") %>">
+              <%= status %>
+            </span>
           </td>
 
           <td>
-            <%= task.getTaskTitle() %>
-          </td>
+            <div class="actions">
 
-          <td>
-            <%= task.getCampaignId() %>
-          </td>
+              <a href="${pageContext.request.contextPath}/tasks/edit/<%= task.getTaskId() %>">
+                <button type="button" class="btn-edit">Edit</button>
+              </a>
 
-          <td>
-            <%= task.getPriority() %>
-          </td>
+              <a href="${pageContext.request.contextPath}/tasks/delete/<%= task.getTaskId() %>"
+                 onclick="return confirm('Are you sure you want to delete this task?');">
+                <button type="button" class="btn-delete">Delete</button>
+              </a>
 
-          <td>
-            <%= task.getDeadline() %>
-          </td>
-
-          <td>
-                        <span class="badge">
-                            <%= task.getStatus() %>
-                        </span>
-          </td>
-
-          <td>
-
-            <a href="${pageContext.request.contextPath}/tasks/edit/<%= task.getTaskId() %>">
-              <button type="button">
-                Edit
-              </button>
-            </a>
-
-            <a href="${pageContext.request.contextPath}/tasks/delete/<%= task.getTaskId() %>"
-               onclick="return confirm('Are you sure you want to delete this task?');">
-
-              <button type="button">
-                Delete
-              </button>
-
-            </a>
-
+            </div>
           </td>
 
         </tr>
 
         <%
-          }
+          }   // end of for loop
 
         } else {
         %>
 
         <tr>
 
-          <td colspan="7">
-            No tasks found.
-          </td>
+          <td colspan="7" class="empty">No tasks found.</td>
 
         </tr>
 
         <%
-          }
+          }   // end of if / else
         %>
 
         </tbody>

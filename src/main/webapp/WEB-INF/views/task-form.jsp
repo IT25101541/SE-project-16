@@ -7,7 +7,7 @@
     <title>Task Form - CreativePulse</title>
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/style.css">
+          href="${pageContext.request.contextPath}/css/style.css?v=<%= System.currentTimeMillis() %>">
 </head>
 
 <body>
@@ -74,7 +74,7 @@
         </p>
 
 
-        <div class="panel">
+        <div class="panel form-panel">
 
             <form method="post"
                   action="${pageContext.request.contextPath}/tasks/save">
@@ -199,7 +199,7 @@
                     </button>
 
                     <a href="${pageContext.request.contextPath}/tasks">
-                        <button type="button">
+                        <button type="button" class="btn-cancel">
                             Cancel
                         </button>
                     </a>
