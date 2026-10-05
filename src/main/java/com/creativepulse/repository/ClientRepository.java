@@ -1,7 +1,0 @@
-package com.creativepulse.repository;
-
-import com.creativepulse.entity.Client;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface ClientRepository extends JpaRepository<Client, Long> {
-}
