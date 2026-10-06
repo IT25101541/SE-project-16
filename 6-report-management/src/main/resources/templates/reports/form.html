@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main(${edit} ? 'Edit Report' : 'Generate Report', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp" style="max-width:780px">
+        <form th:action="${edit} ? @{'/reports/update/' + ${report.id}} : @{/reports/save}"
+              th:object="${report}" method="post" novalidate>
+            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                <ul class="mb-0 ps-3"><li th:each="e : ${#fields.globalErrors()}" th:text="${e}"></li></ul>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-7">
+                    <label class="form-label required">Report Title</label>
+                    <input type="text" th:field="*{title}" class="form-control"
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"
+                           placeholder="e.g. Q1 2026 Campaign Performance">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label required">Report Type</label>
+                    <select th:field="*{type}" class="form-select"
+                            th:classappend="${#fields.hasErrors('type')} ? 'is-invalid'">
+                        <option value="">-- Select a type --</option>
+                        <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Period From</label>
+                    <input type="date" th:field="*{periodFrom}" class="form-control"
+                           th:classappend="${#fields.hasErrors('periodFrom')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('periodFrom')}" th:errors="*{periodFrom}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Period To</label>
+                    <input type="date" th:field="*{periodTo}" class="form-control"
+                           th:classappend="${#fields.hasErrors('periodTo')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('periodTo')}" th:errors="*{periodTo}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Notes</label>
+                    <textarea th:field="*{notes}" rows="3" class="form-control"
+                              th:classappend="${#fields.hasErrors('notes')} ? 'is-invalid'"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+            <button class="btn btn-brand px-4"><i class="bi bi-lightning-charge me-1"></i>
+                <span th:text="${edit} ? 'Update &amp; Regenerate' : 'Generate Report'"></span></button>
+            <a th:href="@{/reports}" class="btn btn-light">Cancel</a>
+        </form>
+    </div>
+</section>
+</body>
+</html>
