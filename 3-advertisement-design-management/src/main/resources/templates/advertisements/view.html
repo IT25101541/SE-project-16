@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main('Advertisement Details', ~{::section})}">
+<body><section>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2"><div><div class="section-label">ADVERTISEMENT DETAILS</div><h2 class="fw-bold mb-1" th:text="${ad.title}">Advertisement</h2><p class="text-muted mb-0">Creative asset information and campaign assignment.</p></div>
+        <div class="d-flex gap-2"><a th:href="@{'/advertisements/edit/' + ${ad.id}}" class="btn btn-brand"><i class="bi bi-pencil me-1"></i>Edit Advertisement</a><a th:href="@{/advertisements}" class="btn btn-light"><i class="bi bi-arrow-left me-1"></i>Back to Ads</a></div></div>
+    <div class="row g-3 mb-3"><div class="col-md-4"><div class="stat"><div class="tile sky"><i class="bi bi-megaphone"></i></div><small>CAMPAIGN</small><h5 class="fw-bold" th:text="${ad.campaign != null ? ad.campaign.name : '-'}">-</h5><div class="sub quiet">Linked campaign</div></div></div>
+        <div class="col-md-4"><div class="stat"><div class="tile amber"><i class="bi bi-file-earmark"></i></div><small>TYPE</small><h5 class="fw-bold" th:text="${ad.type}">BANNER</h5><div class="sub quiet" th:text="${'Version ' + ad.version}">Version 1</div></div></div>
+        <div class="col-md-4"><div class="stat"><div class="tile mint"><i class="bi bi-check-circle"></i></div><small>STATUS</small><h5 class="fw-bold" th:text="${ad.status}">DRAFT</h5><div class="sub quiet">Approval state</div></div></div></div>
+    <div class="row g-3"><div class="col-lg-7"><div class="card-cp"><div class="card-head"><div><h5>Advertisement Information</h5><div class="hint">Complete creative record</div></div></div>
+        <table class="table align-middle mb-0"><tbody><tr><th style="width:28%">Title</th><td th:text="${ad.title}">-</td></tr><tr><th>Campaign</th><td th:text="${ad.campaign != null ? ad.campaign.name : '-'}">-</td></tr><tr><th>Type</th><td th:text="${ad.type}">-</td></tr><tr><th>Status</th><td><span class="badge-soft" th:text="${ad.status}">DRAFT</span></td></tr><tr><th>Version</th><td th:text="${ad.version}">1</td></tr><tr><th>Uploaded By</th><td th:text="${ad.uploadedBy != null ? ad.uploadedBy.fullName : 'Unknown'}">-</td></tr><tr><th>Uploaded At</th><td th:text="${ad.uploadedAt != null ? #temporals.format(ad.uploadedAt,'dd MMM yyyy, HH:mm') : '-'}">-</td></tr><tr><th>Notes</th><td th:text="${ad.notes ?: 'No notes provided.'}">-</td></tr></tbody></table></div></div>
+        <div class="col-lg-5"><div class="card-cp h-100"><div class="card-head"><div><h5>Creative File</h5><div class="hint">Uploaded asset</div></div></div>
+            <div class="p-3 rounded bg-light"><i class="bi bi-file-earmark-arrow-down fs-2"></i><div class="fw-semibold mt-2" th:text="${ad.fileName ?: 'No file'}">file.png</div><a th:if="${ad.storedFileName != null}" th:href="@{'/uploads/' + ${ad.storedFileName}}" target="_blank" class="btn btn-sm btn-brand mt-3"><i class="bi bi-box-arrow-up-right me-1"></i>Open File</a></div></div></div></div>
+    <div class="mt-3 d-flex gap-2 flex-wrap">
+        <form th:if="${ad.status.name() == 'DRAFT' or ad.status.name() == 'REJECTED'}" th:action="@{'/advertisements/' + ${ad.id} + '/submit'}" method="post" class="d-inline">
+            <button class="btn btn-success"><i class="bi bi-send me-1"></i>Submit for Approval</button>
+        </form>
+        <form th:if="${ad.status.name() == 'SUBMITTED'}" th:action="@{'/advertisements/' + ${ad.id} + '/approve'}" method="post" class="d-inline">
+            <button class="btn btn-success"><i class="bi bi-check2-circle me-1"></i>Approve</button>
+        </form>
+        <form th:if="${ad.status.name() == 'SUBMITTED'}" th:action="@{'/advertisements/' + ${ad.id} + '/reject'}" method="post" class="d-inline">
+            <button class="btn btn-outline-danger"><i class="bi bi-x-circle me-1"></i>Reject</button>
+        </form>
+        <form th:if="${ad.status.name() == 'REJECTED'}" th:action="@{'/advertisements/' + ${ad.id} + '/new-version'}" method="post" class="d-inline">
+            <button class="btn btn-outline-primary"><i class="bi bi-arrow-repeat me-1"></i>Start New Version</button>
+        </form>
+        <a th:href="@{'/advertisements/edit/' + ${ad.id}}" class="btn btn-brand">Edit Advertisement</a><a th:href="@{'/advertisements/delete/' + ${ad.id}}" class="btn btn-outline-danger" onclick="return confirm('Delete this advertisement?')">Delete Advertisement</a><a th:href="@{/advertisements}" class="btn btn-light">Back</a></div>
+</section></body></html>

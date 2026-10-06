@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main('Advertisement Management', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <form class="d-flex gap-2" th:action="@{/advertisements}" method="get">
+                <input class="form-control" style="width:260px" name="keyword" th:value="${keyword}"
+                       placeholder="Search advertisement...">
+                <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
+            </form>
+            <a th:href="@{/advertisements/new}" class="btn btn-brand"><i class="bi bi-upload me-1"></i>Upload Design</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>#</th><th>Title</th><th>Campaign</th><th>Type</th><th>Version</th>
+                    <th>File</th><th>Status</th><th>Uploaded By</th><th class="text-end">Actions</th></tr></thead>
+                <tbody>
+                <tr th:each="a,i : ${ads}">
+                    <td th:text="${i.count}"></td>
+                    <td class="fw-semibold" th:text="${a.title}"></td>
+                    <td th:text="${a.campaign != null ? a.campaign.name : '-'}"></td>
+                    <td th:text="${a.type}"></td>
+                    <td th:text="'v' + ${a.version}"></td>
+                    <td><a th:if="${a.storedFileName != null}" target="_blank"
+                           th:href="@{'/uploads/' + ${a.storedFileName}}" th:text="${a.fileName}"></a></td>
+                    <td><span class="badge-soft bg-primary-subtle text-primary-emphasis" th:text="${a.status}"></span></td>
+                    <td th:text="${a.uploadedBy != null ? a.uploadedBy.fullName : '-'}"></td>
+                    <td class="text-end">
+                        <a th:href="@{'/advertisements/view/' + ${a.id}}" class="btn btn-sm btn-outline-secondary" title="View"><i class="bi bi-eye"></i></a>
+                        <a th:href="@{'/advertisements/edit/' + ${a.id}}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a th:href="@{'/advertisements/delete/' + ${a.id}}" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Delete this advertisement?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(ads)}"><td colspan="9"><div class="empty-state"><i class="bi bi-image"></i><div class="es-title">No advertisements yet</div><div>Nothing to show in this view right now.</div></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

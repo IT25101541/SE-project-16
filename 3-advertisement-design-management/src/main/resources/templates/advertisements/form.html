@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main(${edit} ? 'Edit Advertisement' : 'Upload Advertisement', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp" style="max-width:820px">
+<form th:action="${edit} ? @{'/advertisements/update/' + ${ad.id}} : @{/advertisements/save}"
+              th:object="${ad}" method="post" enctype="multipart/form-data" novalidate>
+            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+            <ul class="mb-0 ps-3"><li th:each="e : ${#fields.globalErrors()}" th:text="${e}"></li></ul>
+        </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label required">Title</label>
+                    <input type="text" th:field="*{title}" class="form-control"
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Campaign</label>
+                    <select th:field="*{campaign}" class="form-select"
+                            th:classappend="${#fields.hasErrors('campaign')} ? 'is-invalid'">
+                        <option value="">-- Select a campaign --</option>
+                        <option th:each="c : ${campaigns}" th:value="${c.id}" th:text="${c.name}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('campaign')}" th:errors="*{campaign}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Advertisement Type</label>
+                    <select th:field="*{type}" class="form-select"
+                            th:classappend="${#fields.hasErrors('type')} ? 'is-invalid'">
+                        <option value="">-- Select a type --</option>
+                        <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Status</label>
+                    <select th:field="*{status}" class="form-select">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" th:classappend="${edit} ? '' : 'required'">Design File</label>
+                    <input type="file" name="designFile" class="form-control">
+                    <div class="form-text">Allowed: jpg, jpeg, png, gif, pdf, mp4, psd, ai &mdash; maximum 10 MB.
+                        <span th:if="${edit}">Leave empty to keep the current file. Uploading a new file creates a new version.</span></div>
+                    <div th:if="${edit and ad.storedFileName != null}" class="mt-2">
+                        Current file:
+                        <a target="_blank" th:href="@{'/uploads/' + ${ad.storedFileName}}" th:text="${ad.fileName}"></a>
+                        <span class="text-muted" th:text="' (v' + ${ad.version} + ')'"></span>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Notes</label>
+                    <textarea th:field="*{notes}" rows="3" class="form-control"
+                              th:classappend="${#fields.hasErrors('notes')} ? 'is-invalid'"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <button class="btn btn-brand px-4"><i class="bi bi-save me-1"></i>
+                <span th:text="${edit} ? 'Update Advertisement' : 'Upload'"></span></button>
+            <a th:href="@{/advertisements}" class="btn btn-light">Cancel</a>
+        </form>
+    </div>
+</section>
+</body>
+</html>
