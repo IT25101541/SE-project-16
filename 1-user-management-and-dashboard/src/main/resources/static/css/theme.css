@@ -1,0 +1,257 @@
+/* ============================================================
+   CreativePulse — inner-page theme ("Studio Violet")
+   Matches the landing + sign-in pages: same purple, navy ink,
+   lavender tiles, soft violet shadows, Inter type.
+   Loaded ONLY by templates/layout.html, after app.css, and every
+   rule is scoped to body.cp-app — home.html and login.html are
+   not affected.
+   ============================================================ */
+body.cp-app{
+  /* brand — taken from landing.css */
+  --clay:#5837ab; --clay-600:#4a2c92; --clay-700:#2e1c8c;
+  --clay-tint:#f1edfb; --clay-tint-2:#e4dcf7;
+  --violet:#5837ab; --violet-700:#4a2c92; --violet-tint:#f1edfb; --violet-tint-2:#e4dcf7;
+
+  /* signals, tuned to sit next to the purple */
+  --mint:#23a26d;  --mint-soft:#e2f5ec;
+  --rose:#d6456b;  --rose-soft:#fde8ee;
+  --amber:#d98a1f; --amber-soft:#fdf1dc;
+  --sky:#3c6ee0;   --sky-soft:#e8efff;
+
+  /* neutrals */
+  --ink:#140e38; --ink-2:#3b3a4f; --slate:#6b6a7d; --slate-2:#7d7c92;
+  --line:#ece9f5; --line-2:#f4f1fb; --canvas:#fbfbfe; --surface:#fff;
+
+  --sh-1:0 1px 2px rgba(40,20,120,.04),0 8px 24px -16px rgba(60,35,140,.22);
+  --sh-2:0 14px 34px -18px rgba(60,35,140,.32);
+  --sh-3:0 24px 50px -24px rgba(50,30,130,.45);
+  --sh-pop:0 10px 20px -8px rgba(88,55,171,.6);
+  --r-md:14px; --r-lg:20px;
+
+  --cp-grad:linear-gradient(145deg,#6b3fe0,#4a22b5);
+  --cp-grad-wide:linear-gradient(90deg,#5b2cc9 0%,#4a58e0 55%,#3c6ee0 100%);
+
+  background:
+    radial-gradient(900px 420px at 100% -80px,rgba(88,55,171,.07),transparent 70%),
+    var(--canvas);
+  background-attachment:fixed;
+  color:var(--ink-2);
+}
+body.cp-app h1,body.cp-app h2,body.cp-app h3,body.cp-app h4,body.cp-app h5,body.cp-app h6{color:var(--ink)}
+body.cp-app ::selection{background:var(--clay-tint-2);color:var(--clay-700)}
+body.cp-app *::-webkit-scrollbar-thumb{background:#d9d1ee;background-clip:content-box}
+body.cp-app a{color:var(--clay)}
+body.cp-app a:hover{color:var(--clay-600)}
+body.cp-app :focus-visible{outline:3px solid rgba(88,55,171,.35);outline-offset:2px}
+
+/* ---------------- sidebar ---------------- */
+.cp-app .sidebar{background:#fff;border-right:1px solid var(--line);box-shadow:0 0 40px -26px rgba(60,35,140,.35)}
+
+/* logo pill — same construction as the landing header */
+.cp-app .cp-logo{
+  display:flex;align-items:center;gap:11px;margin:0 0 6px;padding:7px 18px 7px 8px;border-radius:999px;
+  background:#fff;box-shadow:0 8px 24px -10px rgba(60,35,140,.30),0 0 0 1px rgba(88,55,171,.06);
+  color:var(--ink);transition:transform .15s,box-shadow .15s;
+}
+.cp-app .cp-logo:hover{transform:translateY(-1px);color:var(--ink)}
+.cp-app .cp-logo-mark{
+  width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;color:#fff;
+  font-weight:800;font-size:14px;background:var(--cp-grad);box-shadow:0 8px 14px -6px rgba(88,55,171,.7);
+}
+.cp-app .cp-logo-sep{width:1px;height:22px;background:var(--line);flex:none}
+.cp-app .cp-logo-word{font-weight:800;font-size:17px;letter-spacing:-.025em;color:var(--ink);white-space:nowrap}
+.cp-app .cp-logo-word b{color:#5b2cc9;font-weight:800}
+.cp-app .sidebar .tag{margin:6px 8px 18px;color:var(--slate-2);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+
+.cp-app .side-profile{
+  background:linear-gradient(180deg,#f6f2ff 0%,#fff 70%);border:1px solid var(--line);
+  border-radius:var(--r-lg);box-shadow:var(--sh-1);
+}
+.cp-app .avatar-ring{background:conic-gradient(#5837ab 0turn .66turn,#e4dcf7 .66turn 1turn)}
+.cp-app .avatar-ring .avatar{background:var(--cp-grad)}
+.cp-app .side-profile .hello{color:var(--slate-2);letter-spacing:.26em}
+.cp-app .side-profile .who{color:var(--ink)}
+.cp-app .role-chip{background:var(--clay-tint);color:var(--clay-700)}
+.cp-app .side-actions a{background:var(--clay-tint);color:var(--clay)}
+.cp-app .side-actions a:hover{background:var(--clay);color:#fff}
+
+.cp-app .sidebar .group{color:var(--slate-2);letter-spacing:.24em}
+.cp-app .sidebar a.nav-item{color:var(--ink-2);border-radius:12px}
+.cp-app .sidebar a.nav-item i{color:var(--slate)}
+.cp-app .sidebar a.nav-item:hover{background:var(--clay-tint);color:var(--clay)}
+.cp-app .sidebar a.nav-item:hover i{color:var(--clay)}
+.cp-app .sidebar a.nav-item.active{
+  background:linear-gradient(90deg,var(--clay-tint-2),var(--clay-tint));color:var(--clay-700);
+  box-shadow:inset 0 0 0 1px rgba(88,55,171,.10);
+}
+.cp-app .sidebar a.nav-item.active i{color:var(--clay)}
+.cp-app .sidebar a.nav-item.active::before{background:var(--cp-grad);width:4px;height:22px}
+.cp-app .sidebar a.nav-item.danger:hover{background:var(--rose-soft);color:#b52d52}
+.cp-app .sidebar a.nav-item.danger:hover i{color:#b52d52}
+.cp-app .side-foot{color:var(--slate-2)}
+.cp-app .sidebar-backdrop{background:rgba(20,14,56,.5);backdrop-filter:blur(2px)}
+
+/* ---------------- topbar ---------------- */
+.cp-app .topbar{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);
+  padding:14px 20px;position:sticky;top:12px;z-index:30;
+}
+.cp-app .topbar .burger{background:var(--clay-tint);color:var(--clay)}
+.cp-app .page-title{font-weight:800;font-size:1.4rem;letter-spacing:-.035em;color:var(--ink)}
+.cp-app .page-sub{color:var(--slate-2)}
+.cp-app .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 3px;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.cp-app .crumbs a{color:var(--slate-2)}
+.cp-app .crumbs a:hover{color:var(--clay)}
+.cp-app .crumbs i{font-size:.6rem;color:#b9b3cf}
+.cp-app .crumbs .here{color:var(--clay)}
+.cp-app .top-link{
+  display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:11px;
+  background:#fff;border:1px solid var(--line);color:var(--ink-2);font-weight:600;font-size:.84rem;
+  transition:all .15s;
+}
+.cp-app .top-link:hover{background:var(--clay-tint);border-color:var(--clay-tint-2);color:var(--clay)}
+.cp-app .user-chip{background:#fff;border:1px solid var(--line)}
+.cp-app .user-chip:hover{background:var(--clay-tint);border-color:var(--clay-tint-2)}
+.cp-app .user-chip .ua{background:var(--cp-grad)}
+.cp-app .user-chip .un{color:var(--ink)}
+.cp-app .user-chip .ur{color:var(--slate-2)}
+.cp-app .icon-btn:hover{background:var(--clay-tint);color:var(--clay);border-color:var(--clay-tint-2)}
+
+/* ---------------- cards & panels ---------------- */
+.cp-app .card-cp,.cp-app .stat{background:#fff;border:1px solid var(--line);box-shadow:var(--sh-1)}
+.cp-app .card-cp{border-radius:var(--r-lg)}
+.cp-app .stat{border-radius:var(--r-lg);transition:transform .18s,box-shadow .18s,border-color .18s}
+.cp-app .stat:hover{transform:translateY(-2px);box-shadow:var(--sh-2);border-color:#ddd3f3}
+.cp-app .section-label{color:var(--slate-2);letter-spacing:.3em}
+.cp-app .card-head .hint{color:var(--slate-2)}
+.cp-app .card-head h5{color:var(--ink)}
+
+.cp-app .stat .tile{background:var(--clay-tint);color:var(--clay)}
+.cp-app .stat .tile.mint{background:var(--mint-soft);color:#17805a}
+.cp-app .stat .tile.rose{background:var(--rose-soft);color:#b52d52}
+.cp-app .stat .tile.amber{background:var(--amber-soft);color:#9a6210}
+.cp-app .stat .tile.sky{background:var(--sky-soft);color:#2a55b8}
+.cp-app .stat small{color:var(--slate)}
+.cp-app .stat .sub{color:var(--clay)}
+.cp-app .stat .sub.quiet{color:var(--slate-2)}
+
+.cp-app .panel-mint{
+  background:var(--cp-grad-wide);box-shadow:0 22px 40px -22px rgba(74,88,224,.7);
+}
+.cp-app .panel-violet{background:linear-gradient(140deg,#2e1c8c 0%,#5837ab 70%,#7859bc 100%);box-shadow:var(--sh-3)}
+
+.cp-app .measure .m-track{background:var(--line-2);height:6px}
+.cp-app .measure .m-fill{background:linear-gradient(90deg,#5837ab,#7859bc)}
+.cp-app .measure .m-fill::after{border-color:#5837ab}
+.cp-app .measure .m-fill.mint{background:linear-gradient(90deg,#23a26d,#4cc696)}
+.cp-app .measure .m-fill.mint::after{border-color:#23a26d}
+.cp-app .measure .m-fill.rose{background:linear-gradient(90deg,#d6456b,#ee7391)}
+.cp-app .measure .m-fill.rose::after{border-color:#d6456b}
+.cp-app .measure .m-fill.amber{background:linear-gradient(90deg,#d98a1f,#f0b04f)}
+.cp-app .measure .m-fill.amber::after{border-color:#d98a1f}
+.cp-app .measure .m-fill.sky{background:linear-gradient(90deg,#3c6ee0,#6f95f0)}
+.cp-app .measure .m-fill.sky::after{border-color:#3c6ee0}
+.cp-app .measure .m-val{border-color:var(--line);color:var(--ink)}
+
+.cp-app .ledger .row-item{border-bottom-color:var(--line-2)}
+.cp-app .ledger .r-title{color:var(--ink)}
+.cp-app .ledger .r-desc{color:var(--slate-2)}
+.cp-app .ledger .r-dot{background:var(--clay-tint);color:var(--clay)}
+.cp-app .ledger .r-dot.mint{background:var(--mint-soft);color:#17805a}
+.cp-app .ledger .r-dot.rose{background:var(--rose-soft);color:#b52d52}
+.cp-app .ledger .r-dot.amber{background:var(--amber-soft);color:#9a6210}
+.cp-app .ledger .r-amt.pos{color:#17805a}
+
+/* ---------------- buttons ---------------- */
+.cp-app .btn{border-radius:12px;font-weight:600}
+.cp-app .btn-brand,.cp-app .btn-primary{
+  background:var(--clay);border-color:var(--clay);color:#fff;box-shadow:0 12px 22px -12px rgba(88,55,171,.85);
+}
+.cp-app .btn-brand:hover,.cp-app .btn-brand:focus,.cp-app .btn-primary:hover{
+  background:var(--clay-600);border-color:var(--clay-600);color:#fff;transform:translateY(-1px);
+}
+.cp-app .btn-soft{background:var(--clay-tint);border-color:var(--clay-tint-2);color:var(--clay-700)}
+.cp-app .btn-soft:hover{background:var(--clay-tint-2);color:var(--clay-700)}
+.cp-app .btn-light{background:#fff;border:1px solid var(--line);color:var(--ink-2)}
+.cp-app .btn-light:hover{background:var(--clay-tint);border-color:var(--clay-tint-2);color:var(--clay)}
+.cp-app .btn-outline-primary{color:var(--clay);border-color:#d8cdf2}
+.cp-app .btn-outline-primary:hover{background:var(--clay);border-color:var(--clay);color:#fff}
+.cp-app .btn-outline-secondary{color:var(--slate);border-color:var(--line);background:#fff}
+.cp-app .btn-outline-secondary:hover{background:var(--clay-tint);border-color:var(--clay-tint-2);color:var(--clay)}
+.cp-app .btn-outline-dark{color:var(--ink);border-color:#d8d3e8;background:#fff}
+.cp-app .btn-outline-dark:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.cp-app .btn-outline-danger{color:var(--rose);border-color:#f3c9d4}
+.cp-app .btn-outline-danger:hover{background:var(--rose);border-color:var(--rose);color:#fff}
+.cp-app .btn-outline-success{color:#17805a;border-color:#bfe6d4}
+.cp-app .btn-outline-success:hover{background:var(--mint);border-color:var(--mint);color:#fff}
+.cp-app .btn-outline-info{color:#2a55b8;border-color:#c5d4f7}
+.cp-app .btn-outline-info:hover{background:var(--sky);border-color:var(--sky);color:#fff}
+.cp-app .btn-success{background:var(--mint);border-color:var(--mint)}
+.cp-app .btn-danger{background:var(--rose);border-color:var(--rose)}
+.cp-app .btn-secondary,.cp-app .btn-dark{background:var(--ink);border-color:var(--ink)}
+
+/* ---------------- forms ---------------- */
+.cp-app .form-label{color:var(--ink-2)}
+.cp-app .form-control,.cp-app .form-select{border-color:#e3def2;border-radius:12px;color:var(--ink)}
+.cp-app .form-control::placeholder{color:#a19fb5}
+.cp-app .form-control:focus,.cp-app .form-select:focus{border-color:var(--clay);box-shadow:0 0 0 4px rgba(88,55,171,.14)}
+.cp-app .form-control:disabled,.cp-app .form-control[readonly]{background:var(--line-2)}
+.cp-app .form-check-input:checked{background-color:var(--clay);border-color:var(--clay)}
+.cp-app .form-check-input:focus{box-shadow:0 0 0 4px rgba(88,55,171,.14);border-color:var(--clay)}
+.cp-app .input-group-text{background:var(--clay-tint);border-color:#e3def2;color:var(--clay)}
+.cp-app .input-group:focus-within .input-group-text{background:var(--clay-tint-2);color:var(--clay-700);border-color:var(--clay)}
+.cp-app .invalid-feedback{color:var(--rose)}
+
+/* ---------------- tables ---------------- */
+.cp-app .table{color:var(--ink-2)}
+.cp-app .table thead th{background:#f8f6fe;color:var(--slate);border-bottom:1px solid var(--line)}
+.cp-app .table tbody td{border-bottom-color:var(--line-2)}
+.cp-app .table-hover tbody tr:hover > *{background:#f8f5ff}
+.cp-app .empty-state i{color:#cfc4ec}
+.cp-app .empty-state .es-title{color:var(--ink)}
+.cp-app .fw-bold.text-dark,.cp-app td.text-dark{color:var(--ink)!important}
+
+/* ---------------- badges / progress / alerts ---------------- */
+.cp-app .badge-soft{background:var(--line-2);color:var(--slate)}
+.cp-app .bg-primary-subtle{background:var(--clay-tint-2)!important}
+.cp-app .text-primary-emphasis{color:var(--clay-700)!important}
+.cp-app .text-success-emphasis{color:#17805a!important}
+.cp-app .text-danger-emphasis{color:#b52d52!important}
+.cp-app .text-warning-emphasis{color:#9a6210!important}
+.cp-app .text-info-emphasis{color:#2a55b8!important}
+.cp-app .text-muted{color:var(--slate-2)!important}
+.cp-app .text-success{color:#17805a!important}
+.cp-app .progress{background:var(--line-2);height:8px}
+.cp-app .progress-bar{background:linear-gradient(90deg,#5837ab,#4a58e0)}
+.cp-app .alert-success{background:var(--mint-soft);color:#17805a;border-color:#c5ebd9}
+.cp-app .alert-danger{background:var(--rose-soft);color:#b52d52;border-color:#f6ccd7}
+.cp-app .alert-info{background:var(--sky-soft);color:#2a55b8;border-color:#c5d4f7}
+.cp-app .alert-warning{background:var(--amber-soft);color:#9a6210;border-color:#f3dcae}
+
+/* ---------------- dropdowns / tabs / paging / modal ---------------- */
+.cp-app .dropdown-menu{border-color:var(--line);border-radius:14px;box-shadow:0 20px 40px -20px rgba(40,20,120,.3)}
+.cp-app .dropdown-item:hover{background:var(--clay-tint);color:var(--clay)}
+.cp-app .dropdown-item.text-danger:hover{background:var(--rose-soft);color:#b52d52}
+.cp-app .nav-tabs .nav-link.active{color:var(--clay-700);background:var(--clay-tint);border-bottom-color:var(--clay)}
+.cp-app .pagination .page-link{color:var(--clay)}
+.cp-app .pagination .page-item.active .page-link{background:var(--clay);border-color:var(--clay)}
+.cp-app .modal-content{box-shadow:var(--sh-3)}
+
+/* report text output — deep indigo instead of the old brown */
+.cp-app .report-box{background:#140e38;color:#ece8ff;border-color:#2a2160}
+
+/* access-denied icon */
+.cp-app .card-cp [style*="--rose-soft"]{color:#b52d52!important}
+
+/* ---------------- small screens ---------------- */
+@media (max-width:991.98px){
+  .cp-app .topbar{top:8px}
+  .cp-app .top-link span{display:none}
+  .cp-app .top-link{padding:0;width:40px;justify-content:center}
+}
+@media (max-width:575.98px){
+  .cp-app .crumbs{display:none}
+}
+@media print{
+  body.cp-app{background:#fff}
+}

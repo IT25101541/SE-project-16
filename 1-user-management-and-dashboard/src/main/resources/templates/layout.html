@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="main(pageTitle, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'CreativePulse | ' + ${pageTitle}">CreativePulse</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+</head>
+<body class="cp-app">
+
+<div class="sidebar-backdrop no-print"></div>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="sidebar no-print">
+
+    <a th:href="@{/dashboard}" class="cp-logo" aria-label="CreativePulse dashboard">
+        <span class="cp-logo-mark">CP</span>
+        <span class="cp-logo-sep"></span>
+        <span class="cp-logo-word">Creative <b>Pulse</b></span>
+    </a>
+    <span class="tag">Advertising agency workspace</span>
+
+    <!-- who is signed in -->
+    <div class="side-profile">
+        <div class="avatar-ring">
+            <div class="avatar" data-initials-from="#signedInName">CP</div>
+        </div>
+        <div class="hello">WELCOME</div>
+        <p class="who" id="signedInName" sec:authentication="name">user</p>
+        <span class="role-chip" data-role-text sec:authentication="principal.authorities">role</span>
+
+        <div class="side-actions">
+            <a th:href="@{/dashboard}" title="Dashboard" aria-label="Dashboard"><i class="bi bi-grid-1x2"></i></a>
+            <a th:href="@{/tasks}" title="My tasks" aria-label="My tasks"
+               sec:authorize="hasAnyRole('ADMIN','MANAGER','DESIGNER')"><i class="bi bi-list-check"></i></a>
+            <a th:href="@{/reports}" title="Reports" aria-label="Reports"
+               sec:authorize="hasAnyRole('ADMIN','MANAGER')"><i class="bi bi-graph-up-arrow"></i></a>
+            <a th:href="@{/invoices}" title="Billing" aria-label="Billing"
+               sec:authorize="hasAnyRole('ADMIN','FINANCE')"><i class="bi bi-receipt"></i></a>
+        </div>
+    </div>
+
+    <!-- role based menu -->
+    <nav class="menu">
+        <div class="group">MENU</div>
+        <a class="nav-item" data-home="true" th:href="@{/dashboard}">
+            <i class="bi bi-grid-1x2"></i>Dashboard</a>
+        <a class="nav-item" th:href="@{/}">
+            <i class="bi bi-house-door"></i>Website home</a>
+
+        <div class="group">MODULES</div>
+        <a class="nav-item" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
+            <i class="bi bi-people"></i>Users</a>
+        <a class="nav-item" th:href="@{/clients}" sec:authorize="hasAnyRole('ADMIN','SALES')">
+            <i class="bi bi-building"></i>Clients</a>
+        <a class="nav-item" th:href="@{/campaigns}" sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+            <i class="bi bi-megaphone"></i>Campaigns</a>
+        <a class="nav-item" th:href="@{/tasks}" sec:authorize="hasAnyRole('ADMIN','MANAGER','DESIGNER')">
+            <i class="bi bi-list-check"></i>Tasks</a>
+        <a class="nav-item" th:href="@{/advertisements}" sec:authorize="hasAnyRole('ADMIN','DESIGNER','MANAGER')">
+            <i class="bi bi-image"></i>Advertisements</a>
+        <a class="nav-item" th:href="@{/invoices}" sec:authorize="hasAnyRole('ADMIN','FINANCE')">
+            <i class="bi bi-credit-card-2-front"></i>Billing &amp; payments</a>
+        <a class="nav-item" th:href="@{/reports}" sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+            <i class="bi bi-bar-chart-line"></i>Reports</a>
+
+        <div class="sep"></div>
+        <a class="nav-item danger" href="#"
+           onclick="document.getElementById('logoutForm').submit();return false;">
+            <i class="bi bi-box-arrow-right"></i>Sign out</a>
+        <form id="logoutForm" th:action="@{/logout}" method="post" class="d-none"></form>
+    </nav>
+
+    <div class="side-foot">CreativePulse v1.0</div>
+</aside>
+
+<!-- ============ CONTENT ============ -->
+<main class="content">
+
+    <header class="topbar no-print">
+        <button class="burger" type="button" aria-label="Open menu"><i class="bi bi-list"></i></button>
+
+        <div>
+            <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+            <h1 class="page-title" th:text="${pageTitle}">Page</h1>
+            <p class="page-sub" id="todayLine">Welcome back</p>
+        </div>
+
+        <div class="spacer"></div>
+
+        <a th:href="@{/}" class="top-link" title="Back to the website home page">
+            <i class="bi bi-house-door"></i><span>Website</span>
+        </a>
+
+        <div class="dropdown">
+            <button class="user-chip" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="ua" data-initials-from="#signedInName">CP</span>
+                <span class="text-start">
+                    <span class="un d-block" sec:authentication="name">user</span>
+                    <span class="ur d-block" data-role-text sec:authentication="principal.authorities">role</span>
+                </span>
+                <i class="bi bi-chevron-down text-muted small"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid-1x2 me-2"></i>Dashboard</a></li>
+                <li><a class="dropdown-item" th:href="@{/}"><i class="bi bi-house-door me-2"></i>Website home</a></li>
+                <li><a class="dropdown-item text-danger" href="#"
+                       onclick="document.getElementById('logoutForm').submit();return false;">
+                    <i class="bi bi-box-arrow-right me-2"></i>Sign out</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- flash messages -->
+    <div class="alert alert-success alert-dismissible fade show no-print auto-dismiss" th:if="${success}">
+        <i class="bi bi-check-circle me-1"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show no-print auto-dismiss" th:if="${error}">
+        <i class="bi bi-exclamation-triangle me-1"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:replace="${content}">page content</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script>
+  // avatar initials + today's date, filled after the server text is in place
+  document.addEventListener("DOMContentLoaded", function () {
+    var src = document.getElementById("signedInName");
+    var name = src ? (src.textContent || "").trim() : "";
+    var initials = name ? name.replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase() : "CP";
+    document.querySelectorAll("[data-initials-from]").forEach(function (el) { el.textContent = initials; });
+
+    // breadcrumbs built from the URL, so every module/page gets working back-links
+    var crumbs = document.getElementById("crumbs");
+    if (crumbs) {
+      var base = document.querySelector(".sidebar a.nav-item[data-home]");
+      var ctx = base ? base.pathname.replace(/\/dashboard\/?$/, "") : "";
+      var parts = window.location.pathname.slice(ctx.length).split("/").filter(Boolean);
+      var MODULES = { users: "Users", clients: "Clients", campaigns: "Campaigns", tasks: "Tasks",
+                      advertisements: "Advertisements", invoices: "Billing", payments: "Billing", reports: "Reports" };
+      var ACTIONS = { "new": "New", edit: "Edit", view: "Details", print: "Print", export: "Export" };
+      var html = '<a href="' + ctx + '/dashboard">Home</a>';
+      if (parts[0] && MODULES[parts[0]]) {
+        var last = parts.length === 1;
+        html += ' <i class="bi bi-chevron-right"></i> ' +
+                (last ? '<span class="here">' + MODULES[parts[0]] + '</span>'
+                      : '<a href="' + ctx + '/' + parts[0] + '">' + MODULES[parts[0]] + '</a>');
+        if (!last && ACTIONS[parts[1]]) html += ' <i class="bi bi-chevron-right"></i> <span class="here">' + ACTIONS[parts[1]] + '</span>';
+        else if (!last) html += ' <i class="bi bi-chevron-right"></i> <span class="here">' + (document.querySelector(".page-title") || {}).textContent + '</span>';
+      } else {
+        html = '<span class="here">Home</span>';
+        if (parts[0] === "access-denied") html = '<a href="' + ctx + '/dashboard">Home</a> <i class="bi bi-chevron-right"></i> <span class="here">Access denied</span>';
+      }
+      crumbs.innerHTML = html;
+    }
+
+    var line = document.getElementById("todayLine");
+    if (line) {
+      var d = new Date();
+      var hour = d.getHours();
+      var part = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+      line.textContent = part + " · " + d.toLocaleDateString(undefined,
+        { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
+  });
+</script>
+</body>
+</html>

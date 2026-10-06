@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main(${edit} ? 'Edit User' : 'Add User', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp" style="max-width:820px">
+
+        <!-- global (non field) errors, e.g. password mismatch -->
+<form th:action="${edit} ? @{'/users/update/' + ${user.id}} : @{/users/save}"
+              th:object="${user}" method="post" novalidate>
+            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+            <ul class="mb-0 ps-3">
+                <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
+            </ul>
+        </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label required">Full Name</label>
+                    <input type="text" th:field="*{fullName}" class="form-control"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                           placeholder="e.g. Kasun Perera">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
+                         th:errors="*{fullName}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label required">Username</label>
+                    <input type="text" th:field="*{username}" class="form-control"
+                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                           placeholder="e.g. kasun_p">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
+                         th:errors="*{username}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label required">Email</label>
+                    <input type="text" th:field="*{email}" class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                           placeholder="name@creativepulse.lk">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                         th:errors="*{email}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label required">Phone</label>
+                    <input type="text" th:field="*{phone}" class="form-control"
+                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"
+                           placeholder="0771234567">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}"
+                         th:errors="*{phone}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label required">Role</label>
+                    <select th:field="*{role}" class="form-select"
+                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid'">
+                        <option value="">-- Select a role --</option>
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r.label}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}"
+                         th:errors="*{role}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Account Status</label>
+                    <select th:field="*{active}" class="form-select">
+                        <option th:value="true">Active</option>
+                        <option th:value="false">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label" th:classappend="${edit} ? '' : 'required'">Password</label>
+                    <input type="password" name="rawPassword" class="form-control"
+                           th:placeholder="${edit} ? 'Leave blank to keep the current password' : 'Minimum 4 characters'">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label" th:classappend="${edit} ? '' : 'required'">Confirm Password</label>
+                    <input type="password" name="confirmPassword" class="form-control"
+                           placeholder="Re-type the password">
+                </div>
+            </div>
+
+            <hr class="my-4">
+            <button class="btn btn-brand px-4"><i class="bi bi-save me-1"></i>
+                <span th:text="${edit} ? 'Update User' : 'Save User'"></span></button>
+            <a th:href="@{/users}" class="btn btn-light">Cancel</a>
+        </form>
+    </div>
+</section>
+</body>
+</html>

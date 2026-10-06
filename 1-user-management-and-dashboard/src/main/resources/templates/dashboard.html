@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: main('Dashboard', ~{::section})}">
+<body>
+<section>
+
+    <div class="row g-4">
+
+        <!-- ================= LEFT: working area ================= -->
+        <div class="col-12 col-xxl-8">
+
+            <p class="section-label">AT A GLANCE</p>
+            <div class="row g-3 mb-4">
+
+                <div class="col-6 col-lg-4" sec:authorize="hasRole('ADMIN')">
+                    <div class="stat">
+                        <div class="tile"><i class="bi bi-people"></i></div>
+                        <small>Users</small>
+                        <h2 class="num" th:attr="data-count=${userCount}" th:text="${userCount}">0</h2>
+                        <div class="sub quiet">System accounts</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <div class="stat">
+                        <div class="tile sky"><i class="bi bi-building"></i></div>
+                        <small>Clients</small>
+                        <h2 class="num" th:attr="data-count=${clientCount}" th:text="${clientCount}">0</h2>
+                        <div class="sub quiet">Registered companies</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <div class="stat">
+                        <div class="tile"><i class="bi bi-megaphone"></i></div>
+                        <small>Campaigns</small>
+                        <h2 class="num" th:attr="data-count=${campaignCount}" th:text="${campaignCount}">0</h2>
+                        <div class="sub" th:text="${activeCampaigns} + ' running now'">0 running now</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <div class="stat">
+                        <div class="tile amber"><i class="bi bi-list-check"></i></div>
+                        <small>Tasks</small>
+                        <h2 class="num" th:attr="data-count=${taskCount}" th:text="${taskCount}">0</h2>
+                        <div class="sub" th:text="${pendingTasks} + ' still open'">0 still open</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <div class="stat">
+                        <div class="tile mint"><i class="bi bi-image"></i></div>
+                        <small>Advertisements</small>
+                        <h2 class="num" th:attr="data-count=${adCount}" th:text="${adCount}">0</h2>
+                        <div class="sub" th:text="${pendingAds} + ' awaiting approval'">0 awaiting approval</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <div class="stat">
+                        <div class="tile rose"><i class="bi bi-receipt"></i></div>
+                        <small>Invoices</small>
+                        <h2 class="num" th:attr="data-count=${invoiceCount}" th:text="${invoiceCount}">0</h2>
+                        <div class="sub" th:text="${unpaidInvoices} + ' unpaid'">0 unpaid</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---------- workload chart ---------- -->
+            <p class="section-label">WORKLOAD</p>
+            <div class="card-cp mb-4">
+                <div class="card-head">
+                    <div>
+                        <h5>Records held in each module</h5>
+                        <p class="hint">Bars are scaled against the busiest module.</p>
+                    </div>
+                    <span class="badge-soft bg-success-subtle text-success-emphasis">Live data</span>
+                </div>
+
+                <div data-bars>
+                    <div class="measure" sec:authorize="hasRole('ADMIN')">
+                        <div class="m-label">Users</div>
+                        <div class="m-track"><span class="m-fill" th:attr="data-value=${userCount}"></span></div>
+                        <div class="m-val" th:text="${userCount}">0</div>
+                    </div>
+                    <div class="measure">
+                        <div class="m-label">Clients</div>
+                        <div class="m-track"><span class="m-fill sky" th:attr="data-value=${clientCount}"></span></div>
+                        <div class="m-val" th:text="${clientCount}">0</div>
+                    </div>
+                    <div class="measure">
+                        <div class="m-label">Campaigns</div>
+                        <div class="m-track"><span class="m-fill" th:attr="data-value=${campaignCount}"></span></div>
+                        <div class="m-val" th:text="${campaignCount}">0</div>
+                    </div>
+                    <div class="measure">
+                        <div class="m-label">Tasks</div>
+                        <div class="m-track"><span class="m-fill amber" th:attr="data-value=${taskCount}"></span></div>
+                        <div class="m-val" th:text="${taskCount}">0</div>
+                    </div>
+                    <div class="measure">
+                        <div class="m-label">Advertisements</div>
+                        <div class="m-track"><span class="m-fill mint" th:attr="data-value=${adCount}"></span></div>
+                        <div class="m-val" th:text="${adCount}">0</div>
+                    </div>
+                    <div class="measure">
+                        <div class="m-label">Invoices</div>
+                        <div class="m-track"><span class="m-fill rose" th:attr="data-value=${invoiceCount}"></span></div>
+                        <div class="m-val" th:text="${invoiceCount}">0</div>
+                    </div>
+                    <div class="measure">
+                        <div class="m-label">Reports</div>
+                        <div class="m-track"><span class="m-fill" th:attr="data-value=${reportCount}"></span></div>
+                        <div class="m-val" th:text="${reportCount}">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---------- campaign table ---------- -->
+            <p class="section-label">CAMPAIGNS</p>
+            <div class="card-cp">
+                <div class="card-head">
+                    <div>
+                        <h5>Campaign overview</h5>
+                        <p class="hint">Budget, progress and deadline for every campaign on the books.</p>
+                    </div>
+                    <a th:href="@{/campaigns}" class="btn btn-soft btn-sm"
+                       sec:authorize="hasAnyRole('ADMIN','MANAGER')">Open campaigns</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th>Campaign</th><th>Client</th><th>Status</th>
+                            <th style="min-width:130px">Progress</th><th>Budget (LKR)</th><th>Ends</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="c : ${recentCampaigns}">
+                            <td class="fw-bold text-dark" th:text="${c.name}"></td>
+                            <td th:text="${c.client != null ? c.client.companyName : '—'}"></td>
+                            <td th:switch="${c.status != null} ? ${c.status.name()} : 'NONE'">
+                                <span th:case="'ACTIVE'" class="badge-soft bg-success-subtle text-success-emphasis">Active</span>
+                                <span th:case="'COMPLETED'" class="badge-soft bg-primary-subtle text-primary-emphasis">Completed</span>
+                                <span th:case="'PAUSED'" class="badge-soft bg-warning-subtle text-warning-emphasis">Paused</span>
+                                <span th:case="'CANCELLED'" class="badge-soft bg-danger-subtle text-danger-emphasis">Cancelled</span>
+                                <span th:case="*" class="badge-soft" th:text="${c.status} ?: 'Planned'">Planned</span>
+                            </td>
+                            <td>
+                                <div class="progress"><div class="progress-bar"
+                                     th:style="'width:' + ${c.progress} + '%'"></div></div>
+                                <small class="text-muted fw-semibold" th:text="${c.progress} + '%'"></small>
+                            </td>
+                            <td class="num fw-semibold"
+                                th:text="${#numbers.formatDecimal(c.budget,1,'COMMA',2,'POINT')}"></td>
+                            <td class="text-muted text-nowrap" th:text="${c.endDate}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentCampaigns)}">
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="bi bi-megaphone"></i>
+                                    <div class="es-title">No campaigns yet</div>
+                                    <div>Create the first campaign to start tracking budget and progress.</div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= RIGHT: signals ================= -->
+        <div class="col-12 col-xxl-4">
+
+            <p class="section-label">TODAY</p>
+
+            <div class="panel-mint mb-3">
+                <div class="lbl">ACTIVE CAMPAIGNS</div>
+                <div class="val num" th:text="${activeCampaigns}">0</div>
+                <div class="note" th:text="'of ' + ${campaignCount} + ' campaigns currently in flight'">
+                    of 0 campaigns currently in flight
+                </div>
+            </div>
+
+            <div class="card-cp mb-3">
+                <div class="card-head mb-2">
+                    <h5>Needs attention</h5>
+                </div>
+                <div class="ledger">
+                    <div class="row-item">
+                        <span class="r-dot amber"><i class="bi bi-list-check"></i></span>
+                        <span>
+                            <span class="r-title d-block">Open tasks</span>
+                            <span class="r-desc">Not finished yet</span>
+                        </span>
+                        <span class="r-amt" th:text="${pendingTasks}">0</span>
+                    </div>
+                    <div class="row-item">
+                        <span class="r-dot"><i class="bi bi-hourglass-split"></i></span>
+                        <span>
+                            <span class="r-title d-block">Designs awaiting approval</span>
+                            <span class="r-desc">Sent for review</span>
+                        </span>
+                        <span class="r-amt" th:text="${pendingAds}">0</span>
+                    </div>
+                    <div class="row-item">
+                        <span class="r-dot rose"><i class="bi bi-receipt"></i></span>
+                        <span>
+                            <span class="r-title d-block">Unpaid invoices</span>
+                            <span class="r-desc">Payment outstanding</span>
+                        </span>
+                        <span class="r-amt neg" th:text="${unpaidInvoices}">0</span>
+                    </div>
+                    <div class="row-item">
+                        <span class="r-dot mint"><i class="bi bi-file-earmark-bar-graph"></i></span>
+                        <span>
+                            <span class="r-title d-block">Reports generated</span>
+                            <span class="r-desc">Saved in the system</span>
+                        </span>
+                        <span class="r-amt pos" th:text="${reportCount}">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-cp mb-3">
+                <div class="card-head mb-3"><h5>Jump back in</h5></div>
+                <div class="d-grid gap-2">
+                    <a th:href="@{/clients/new}" class="btn btn-soft text-start"
+                       sec:authorize="hasAnyRole('ADMIN','SALES')">
+                        <i class="bi bi-building-add me-2"></i>Add a client</a>
+                    <a th:href="@{/campaigns/new}" class="btn btn-soft text-start"
+                       sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                        <i class="bi bi-megaphone me-2"></i>Start a campaign</a>
+                    <a th:href="@{/tasks/new}" class="btn btn-soft text-start"
+                       sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                        <i class="bi bi-plus-square me-2"></i>Assign a task</a>
+                    <a th:href="@{/advertisements/new}" class="btn btn-soft text-start"
+                       sec:authorize="hasAnyRole('ADMIN','DESIGNER')">
+                        <i class="bi bi-cloud-arrow-up me-2"></i>Upload a design</a>
+                    <a th:href="@{/invoices/new}" class="btn btn-soft text-start"
+                       sec:authorize="hasAnyRole('ADMIN','FINANCE')">
+                        <i class="bi bi-receipt-cutoff me-2"></i>Raise an invoice</a>
+                    <a th:href="@{/reports/new}" class="btn btn-soft text-start"
+                       sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                        <i class="bi bi-bar-chart-line me-2"></i>Generate a report</a>
+                </div>
+            </div>
+
+            <div class="panel-violet">
+                <h4>Your access</h4>
+                <p class="muted small mb-3">
+                    CreativePulse only shows the modules your role is responsible for, so
+                    each team works inside its own part of the agency.
+                </p>
+                <div class="pv-stat">
+                    <span>Signed in as</span>
+                    <b data-role-text sec:authentication="principal.authorities" style="font-size:1.05rem">role</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
