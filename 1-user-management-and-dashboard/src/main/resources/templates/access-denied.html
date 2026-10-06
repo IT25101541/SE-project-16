@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main('Access denied', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp text-center py-5">
+        <div class="mx-auto mb-3 d-grid"
+             style="width:64px;height:64px;border-radius:20px;background:var(--rose-soft);color:#b52d52;place-items:center;font-size:1.7rem">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+        <h4 class="fw-bold mb-2">This module isn't part of your role</h4>
+        <p class="text-muted mb-4" style="max-width:46ch;margin-inline:auto">
+            CreativePulse gives each role its own set of modules. Ask an administrator
+            if you need access to this one.
+        </p>
+        <div><a th:href="@{/dashboard}" class="btn btn-brand">Back to home</a></div>
+    </div>
+</section>
+</body>
+</html>
