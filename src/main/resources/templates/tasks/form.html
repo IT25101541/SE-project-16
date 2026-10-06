@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main(${edit} ? 'Edit Task' : 'Assign New Task', ~{::section})}">
+
+<body>
+
+<section>
+
+    <div class="card-cp" style="max-width:820px">
+
+        <form th:action="${edit} ? @{'/tasks/update/' + ${task.id}} : @{/tasks/save}"
+              th:object="${task}"
+              method="post"
+              id="taskForm"
+              novalidate>
+
+            <!-- Global Errors -->
+            <div class="alert alert-danger"
+                 th:if="${#fields.hasGlobalErrors()}">
+
+                <ul class="mb-0 ps-3">
+                    <li th:each="e : ${#fields.globalErrors()}"
+                        th:text="${e}">
+                    </li>
+                </ul>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- Task Title -->
+                <div class="col-md-6">
+
+                    <label class="form-label required">
+                        Task Title
+                    </label>
+
+                    <input type="text"
+                           th:field="*{title}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'">
+
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('title')}"
+                         th:errors="*{title}">
+                    </div>
+
+                </div>
+
+
+                <!-- Campaign -->
+                <div class="col-md-6">
+
+                    <label class="form-label required">
+                        Campaign
+                    </label>
+
+                    <select th:field="*{campaign}"
+                            id="campaign"
+                            class="form-select"
+                            th:classappend="${#fields.hasErrors('campaign')} ? 'is-invalid'">
+
+                        <option value="">
+                            -- Select a campaign --
+                        </option>
+
+                        <option th:each="c : ${campaigns}"
+                                th:value="${c.id}"
+                                th:text="${c.name}"
+                                th:attr="data-start=${c.startDate},data-end=${c.endDate}">
+                        </option>
+
+                    </select>
+
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('campaign')}"
+                         th:errors="*{campaign}">
+                    </div>
+
+                </div>
+
+
+                <!-- Assign To -->
+                <div class="col-md-6">
+
+                    <label class="form-label required">
+                        Assign To
+                    </label>
+
+                    <select th:field="*{assignee}"
+                            class="form-select"
+                            th:classappend="${#fields.hasErrors('assignee')} ? 'is-invalid'">
+
+                        <option value="">
+                            -- Select an employee --
+                        </option>
+
+                        <option th:each="e : ${employees}"
+                                th:value="${e.id}"
+                                th:text="${e.fullName} + ' (' + ${e.role.label} + ')'">
+                        </option>
+
+                    </select>
+
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('assignee')}"
+                         th:errors="*{assignee}">
+                    </div>
+
+                </div>
+
+
+                <!-- Due Date -->
+                <div class="col-md-6">
+
+                    <label class="form-label required">
+                        Due Date
+                    </label>
+
+                    <input type="date"
+                           th:field="*{dueDate}"
+                           id="dueDate"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('dueDate')} ? 'is-invalid'">
+
+                    <div id="dueDateError"
+                         class="invalid-feedback"
+                         th:if="${#fields.hasErrors('dueDate')}"
+                         th:errors="*{dueDate}">
+                    </div>
+
+                </div>
+
+
+                <!-- Priority -->
+                <div class="col-md-6">
+
+                    <label class="form-label required">
+                        Priority
+                    </label>
+
+                    <select th:field="*{priority}"
+                            class="form-select">
+
+                        <option th:each="p : ${priorities}"
+                                th:value="${p}"
+                                th:text="${p}">
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="col-md-6">
+
+                    <label class="form-label required">
+                        Status
+                    </label>
+
+                    <select th:field="*{status}"
+                            class="form-select">
+
+                        <option th:each="s : ${statuses}"
+                                th:value="${s}"
+                                th:text="${s}">
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea th:field="*{description}"
+                              rows="3"
+                              class="form-control"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'">
+                    </textarea>
+
+                    <div class="invalid-feedback"
+                         th:if="${#fields.hasErrors('description')}"
+                         th:errors="*{description}">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <!-- Buttons -->
+            <button type="submit"
+                    class="btn btn-brand px-4">
+
+                <i class="bi bi-save me-1"></i>
+
+                <span th:text="${edit} ? 'Update Task' : 'Save Task'">
+                </span>
+
+            </button>
+
+            <a th:href="@{/tasks}"
+               class="btn btn-light">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- Due Date Validation -->
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const form = document.getElementById("taskForm");
+        const campaignSelect = document.getElementById("campaign");
+        const dueDateInput = document.getElementById("dueDate");
+
+        if (!form || !campaignSelect || !dueDateInput) {
+            return;
+        }
+
+
+        function validateDueDate(showError = true) {
+
+            const dueDate = dueDateInput.value;
+            const selectedOption =
+                campaignSelect.options[campaignSelect.selectedIndex];
+
+            // Remove previous JavaScript validation
+            dueDateInput.classList.remove("is-invalid");
+
+            const oldJsError =
+                document.getElementById("jsDueDateError");
+
+            if (oldJsError) {
+                oldJsError.remove();
+            }
+
+
+            // No due date
+            if (!dueDate) {
+                return true;
+            }
+
+
+            // No campaign selected
+            if (!campaignSelect.value) {
+                return true;
+            }
+
+
+            const campaignStart =
+                selectedOption.getAttribute("data-start");
+
+            const campaignEnd =
+                selectedOption.getAttribute("data-end");
+
+
+            /*
+             * RULE 1
+             * Due date cannot be in the past.
+             */
+            const today = new Date();
+
+            const todayString =
+                today.getFullYear() + "-" +
+                String(today.getMonth() + 1).padStart(2, "0") + "-" +
+                String(today.getDate()).padStart(2, "0");
+
+
+            if (dueDate < todayString) {
+
+                if (showError) {
+                    showDueDateError(
+                        "Due date cannot be in the past."
+                    );
+                }
+
+                return false;
+            }
+
+
+            /*
+             * RULE 2
+             * Due date cannot be before campaign start.
+             */
+            if (campaignStart && dueDate < campaignStart) {
+
+                if (showError) {
+                    showDueDateError(
+                        "Due date cannot be before the campaign start date."
+                    );
+                }
+
+                return false;
+            }
+
+
+            /*
+             * RULE 3
+             * Due date cannot be after campaign end.
+             */
+            if (campaignEnd && dueDate > campaignEnd) {
+
+                if (showError) {
+                    showDueDateError(
+                        "Due date cannot be after the campaign end date."
+                    );
+                }
+
+                return false;
+            }
+
+
+            return true;
+        }
+
+
+        function showDueDateError(message) {
+
+            dueDateInput.classList.add("is-invalid");
+
+            const error = document.createElement("div");
+
+            error.id = "jsDueDateError";
+
+            error.className = "invalid-feedback";
+
+            error.textContent = message;
+
+            dueDateInput.parentNode.appendChild(error);
+        }
+
+
+        /*
+         * Validate when campaign changes.
+         */
+        campaignSelect.addEventListener("change", function () {
+
+            validateDueDate(true);
+
+        });
+
+
+        /*
+         * Validate when due date changes.
+         */
+        dueDateInput.addEventListener("change", function () {
+
+            validateDueDate(true);
+
+        });
+
+
+        /*
+         * Validate before submitting.
+         */
+        form.addEventListener("submit", function (event) {
+
+            if (!validateDueDate(true)) {
+
+                event.preventDefault();
+
+                dueDateInput.focus();
+
+            }
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
