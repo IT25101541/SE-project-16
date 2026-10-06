@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: main(${edit} ? 'Edit Campaign' : 'New Campaign', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp" style="max-width:880px">
+<form th:action="${edit} ? @{'/campaigns/update/' + ${campaign.id}} : @{/campaigns/save}"
+              th:object="${campaign}" method="post" novalidate>
+            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+            <ul class="mb-0 ps-3"><li th:each="e : ${#fields.globalErrors()}" th:text="${e}"></li></ul>
+        </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label required">Campaign Name</label>
+                    <input type="text" th:field="*{name}" class="form-control"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Client</label>
+                    <select th:field="*{client}" class="form-select"
+                            th:classappend="${#fields.hasErrors('client')} ? 'is-invalid'">
+                        <option value="">-- Select a client --</option>
+                        <option th:each="cl : ${clients}" th:value="${cl.id}" th:text="${cl.companyName}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('client')}" th:errors="*{client}"></div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Campaign Manager</label>
+                    <select th:field="*{manager}" class="form-select">
+                        <option value="">-- Unassigned --</option>
+                        <option th:each="m : ${managers}" th:value="${m.id}" th:text="${m.fullName}"></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required">Budget (LKR)</label>
+                    <input type="number" step="0.01" th:field="*{budget}" class="form-control"
+                           th:classappend="${#fields.hasErrors('budget')} ? 'is-invalid'" placeholder="e.g. 500000.00">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('budget')}" th:errors="*{budget}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label required">Start Date</label>
+                    <input type="date" th:field="*{startDate}" class="form-control"
+                           th:classappend="${#fields.hasErrors('startDate')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label required">End Date</label>
+                    <input type="date" th:field="*{endDate}" class="form-control"
+                           th:classappend="${#fields.hasErrors('endDate')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label required">Status</label>
+                    <select th:field="*{status}" class="form-select">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Progress (%)</label>
+                    <input type="number" th:field="*{progress}" class="form-control" min="0" max="100"
+                           th:classappend="${#fields.hasErrors('progress')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('progress')}" th:errors="*{progress}"></div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea th:field="*{description}" rows="3" class="form-control"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <button class="btn btn-brand px-4"><i class="bi bi-save me-1"></i>
+                <span th:text="${edit} ? 'Update Campaign' : 'Save Campaign'"></span></button>
+            <a th:href="@{/campaigns}" class="btn btn-light">Cancel</a>
+        </form>
+    </div>
+</section>
+</body>
+</html>

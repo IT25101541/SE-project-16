@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main('Campaign Management', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <form class="d-flex gap-2" th:action="@{/campaigns}" method="get">
+                <input class="form-control" style="width:260px" name="keyword" th:value="${keyword}"
+                       placeholder="Search campaign name...">
+                <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
+            </form>
+            <a th:href="@{/campaigns/new}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>New Campaign</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>#</th><th>Campaign</th><th>Client</th><th>Manager</th><th>Period</th>
+                    <th>Budget (LKR)</th><th>Progress</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+                <tbody>
+                <tr th:each="c,i : ${campaigns}">
+                    <td th:text="${i.count}"></td>
+                    <td class="fw-semibold" th:text="${c.name}"></td>
+                    <td th:text="${c.client != null ? c.client.companyName : '-'}"></td>
+                    <td th:text="${c.manager != null ? c.manager.fullName : 'Unassigned'}"></td>
+                    <td><small th:text="${c.startDate} + ' to ' + ${c.endDate}"></small></td>
+                    <td th:text="${#numbers.formatDecimal(c.budget,1,'COMMA',2,'POINT')}"></td>
+                    <td style="min-width:110px">
+                        <div class="progress" style="height:7px">
+                            <div class="progress-bar" th:style="'width:' + ${c.progress} + '%'"></div>
+                        </div>
+                        <small th:text="${c.progress} + '%'"></small>
+                    </td>
+                    <td><span class="badge-soft bg-primary-subtle text-primary-emphasis" th:text="${c.status}"></span></td>
+                    <td class="text-end">
+                        <a th:href="@{'/campaigns/view/' + ${c.id}}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                        <a th:href="@{'/campaigns/edit/' + ${c.id}}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a th:href="@{'/campaigns/delete/' + ${c.id}}" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Delete this campaign?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(campaigns)}"><td colspan="9"><div class="empty-state"><i class="bi bi-megaphone"></i><div class="es-title">No campaigns yet</div><div>Nothing to show in this view right now.</div></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
