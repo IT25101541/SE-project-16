@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main('Task Details', ~{::section})}">
+<body><section>
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2"><div><div class="section-label">TASK DETAILS</div><h2 class="fw-bold mb-1" th:text="${task.title}">Task</h2><p class="text-muted mb-0">Employee task information and assignment details.</p></div>
+        <div class="d-flex gap-2"><a th:href="@{'/tasks/edit/' + ${task.id}}" class="btn btn-brand"><i class="bi bi-pencil me-1"></i>Edit Task</a><a th:href="@{/tasks}" class="btn btn-light"><i class="bi bi-arrow-left me-1"></i>Back to Tasks</a></div></div>
+    <div class="row g-3 mb-3"><div class="col-md-4"><div class="stat"><div class="tile sky"><i class="bi bi-kanban"></i></div><small>CAMPAIGN</small><h5 class="fw-bold" th:text="${task.campaign != null ? task.campaign.name : '-'}">-</h5><div class="sub quiet">Linked campaign</div></div></div>
+        <div class="col-md-4"><div class="stat"><div class="tile amber"><i class="bi bi-person"></i></div><small>ASSIGNED TO</small><h5 class="fw-bold" th:text="${task.assignee != null ? task.assignee.fullName : 'Unassigned'}">-</h5><div class="sub quiet">Employee</div></div></div>
+        <div class="col-md-4"><div class="stat"><div class="tile mint"><i class="bi bi-flag"></i></div><small>STATUS</small><h5 class="fw-bold" th:text="${task.status}">TODO</h5><div class="sub quiet" th:text="${task.priority + ' priority'}">MEDIUM priority</div></div></div></div>
+    <div class="card-cp"><div class="card-head"><div><h5>Task Information</h5><div class="hint">Complete task record</div></div></div><table class="table align-middle mb-0"><tbody>
+        <tr><th style="width:25%">Title</th><td th:text="${task.title}">-</td></tr><tr><th>Description</th><td th:text="${task.description ?: 'No description provided.'}">-</td></tr>
+        <tr><th>Campaign</th><td th:text="${task.campaign != null ? task.campaign.name : '-'}">-</td></tr><tr><th>Employee</th><td th:text="${task.assignee != null ? task.assignee.fullName + ' (' + task.assignee.username + ')' : 'Unassigned'}">-</td></tr>
+        <tr><th>Due Date</th><td th:text="${task.dueDate}">-</td></tr><tr><th>Status</th><td><span class="badge-soft" th:text="${task.status}">TODO</span></td></tr><tr><th>Priority</th><td><span class="badge-soft" th:text="${task.priority}">MEDIUM</span></td></tr>
+    </tbody></table></div>
+    <div class="mt-3 d-flex gap-2 flex-wrap">
+        <form th:if="${task.status.name() == 'TODO' and task.assignee != null}" th:action="@{'/tasks/' + ${task.id} + '/start'}" method="post" class="d-inline">
+            <button class="btn btn-primary"><i class="bi bi-play-circle me-1"></i>Start Task</button>
+        </form>
+        <form th:if="${task.status.name() == 'IN_PROGRESS' or task.status.name() == 'REVIEW'}" th:action="@{'/tasks/' + ${task.id} + '/complete'}" method="post" class="d-inline">
+            <button class="btn btn-success"><i class="bi bi-check-circle me-1"></i>Complete Task</button>
+        </form>
+        <a th:href="@{'/tasks/edit/' + ${task.id}}" class="btn btn-brand">Edit Task</a><a th:href="@{'/tasks/delete/' + ${task.id}}" class="btn btn-outline-danger" onclick="return confirm('Delete this task?')">Delete Task</a><a th:href="@{/tasks}" class="btn btn-light">Back</a></div>
+</section></body></html>

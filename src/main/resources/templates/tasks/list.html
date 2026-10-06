@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: main('Employee Task Management', ~{::section})}">
+<body>
+<section>
+    <div class="card-cp">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <form class="d-flex gap-2" th:action="@{/tasks}" method="get">
+                <input class="form-control" style="width:260px" name="keyword" th:value="${keyword}"
+                       placeholder="Search task title...">
+                <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
+            </form>
+            <a th:href="@{/tasks/new}" class="btn btn-brand"><i class="bi bi-plus-lg me-1"></i>Assign Task</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>#</th><th>Task</th><th>Campaign</th><th>Assigned To</th>
+                    <th>Due Date</th><th>Priority</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+                <tbody>
+                <tr th:each="t,i : ${tasks}">
+                    <td th:text="${i.count}"></td>
+                    <td class="fw-semibold" th:text="${t.title}"></td>
+                    <td th:text="${t.campaign != null ? t.campaign.name : '-'}"></td>
+                    <td th:text="${t.assignee != null ? t.assignee.fullName : '-'}"></td>
+                    <td th:text="${t.dueDate}"></td>
+                    <td><span class="badge-soft"
+                              th:classappend="${t.priority.name() == 'HIGH'} ? 'bg-danger-subtle text-danger-emphasis' : 'bg-secondary-subtle text-secondary-emphasis'"
+                              th:text="${t.priority}"></span></td>
+                    <td><span class="badge-soft bg-primary-subtle text-primary-emphasis" th:text="${t.status}"></span></td>
+                    <td class="text-end">
+                        <a th:href="@{'/tasks/view/' + ${t.id}}" class="btn btn-sm btn-outline-secondary" title="View"><i class="bi bi-eye"></i></a>
+                        <a th:href="@{'/tasks/edit/' + ${t.id}}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a th:href="@{'/tasks/delete/' + ${t.id}}" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Remove this task?')"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(tasks)}"><td colspan="8"><div class="empty-state"><i class="bi bi-list-check"></i><div class="es-title">No tasks yet</div><div>Nothing to show in this view right now.</div></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
